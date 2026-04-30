@@ -1,4 +1,4 @@
-// ChiefOS — Phase 0 schema (Foundation)
+// ChiefOS — Phase 0 (Foundation) + Phase 1 (CRM Core) schema
 // Single source of truth: ../../SCHEMA.md
 // Add models here as phases land. Never drift from SCHEMA.md.
 
@@ -85,6 +85,10 @@ model Workspace {
   customRoles CustomRole[]
   activities  Activity[]
   auditLogs   AuditLog[]
+  contacts    Contact[]
+  companies   Company[]
+  tags        Tag[]
+  notes       Note[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -179,6 +183,158 @@ model ApiKey {
 }
 
 // =====================================================================
+// 2. CRM (Contacts, Companies, Tags, Notes)
+// =====================================================================
+
+model Contact {
+  id          String @id @default(cuid())
+  workspaceId String
+
+  // Identity
+  firstName       String?
+  lastName        String?
+  email           String?
+  phone           String?
+  alternateEmails String[] @default([])
+  alternatePhones String[] @default([])
+
+  // Profile
+  jobTitle    String?
+  companyId   String?
+  avatarUrl   String?
+  websiteUrl  String?
+  linkedinUrl String?
+  twitterUrl  String?
+
+  // Address
+  addressLine1 String?
+  addressLine2 String?
+  city         String?
+  region       String?
+  postalCode   String?
+  country      String?
+
+  // CRM
+  ownerId        String?
+  source         String?
+  lifecycleStage LifecycleStage @default(LEAD)
+  leadScore      Int            @default(0)
+  doNotEmail     Boolean        @default(false)
+  doNotCall      Boolean        @default(false)
+
+  customFields Json @default("{}")
+
+  // Counters (denormalized; recomputed by jobs)
+  totalRevenue    Decimal   @default(0) @db.Decimal(12, 2)
+  openDealsValue  Decimal   @default(0) @db.Decimal(12, 2)
+  lastContactedAt DateTime?
+
+  workspace Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  company   Company?     @relation(fields: [companyId], references: [id])
+  tags      ContactTag[]
+  notes     Note[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([workspaceId])
+  @@index([workspaceId, email])
+  @@index([workspaceId, ownerId])
+  @@index([workspaceId, companyId])
+  @@index([workspaceId, lifecycleStage])
+}
+
+model Company {
+  id          String  @id @default(cuid())
+  workspaceId String
+  name        String
+  domain      String?
+  industry    String?
+  size        String?
+  description String? @db.Text
+  websiteUrl  String?
+  linkedinUrl String?
+  logoUrl     String?
+
+  // Address
+  addressLine1 String?
+  city         String?
+  region       String?
+  postalCode   String?
+  country      String?
+
+  ownerId      String?
+  customFields Json    @default("{}")
+
+  totalRevenue Decimal @default(0) @db.Decimal(12, 2)
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contacts  Contact[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@unique([workspaceId, domain])
+  @@index([workspaceId])
+  @@index([workspaceId, name])
+}
+
+model Tag {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  color       String   @default("#7c3aed")
+  scope       TagScope @default(CONTACT)
+
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contactTags ContactTag[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([workspaceId, name, scope])
+  @@index([workspaceId])
+}
+
+model ContactTag {
+  contactId String
+  tagId     String
+
+  contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@id([contactId, tagId])
+}
+
+model Note {
+  id          String @id @default(cuid())
+  workspaceId String
+  authorId    String
+
+  // Polymorphic target
+  targetType ActivityTargetType
+  targetId   String
+
+  body      String  @db.Text
+  bodyJson  Json?
+  isPrivate Boolean @default(false)
+
+  contactId String?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contact   Contact?  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([workspaceId, targetType, targetId])
+  @@index([workspaceId, authorId])
+}
+
+// =====================================================================
 // 17. Activity, Audit Log, Notifications
 // =====================================================================
 
@@ -263,6 +419,26 @@ enum DomainType {
   APP
   PORTAL
   EMAIL
+}
+
+enum LifecycleStage {
+  SUBSCRIBER
+  LEAD
+  MQL
+  SQL
+  OPPORTUNITY
+  CUSTOMER
+  EVANGELIST
+  OTHER
+}
+
+enum TagScope {
+  CONTACT
+  COMPANY
+  DEAL
+  PROJECT
+  TASK
+  FILE
 }
 
 // Full enum included now to avoid future migrations just to add values.

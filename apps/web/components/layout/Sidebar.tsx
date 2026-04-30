@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Briefcase,
+  Building2,
   CalendarClock,
   CheckSquare,
   ChevronsUpDown,
@@ -51,7 +52,8 @@ function navFor(slug: string): NavSection[] {
     {
       heading: 'CRM',
       items: [
-        { label: 'Contacts', href: `/${slug}/contacts`, icon: Users, phase: 1 },
+        { label: 'Contacts', href: `/${slug}/contacts`, icon: Users },
+        { label: 'Companies', href: `/${slug}/companies`, icon: Building2 },
         { label: 'Deals', href: `/${slug}/deals`, icon: Briefcase, phase: 2 },
       ],
     },
