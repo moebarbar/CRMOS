@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRMOS — Dashboard</title>
+  <link rel="stylesheet" href="dashboard/dashboard.css?v=4" />
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="shared/MoeIcon.jsx"></script>
+  <script type="text/babel" src="shared/ui.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="dashboard/data.jsx"></script>
+  <script type="text/babel" src="dashboard/modules1.jsx"></script>
+  <script type="text/babel" src="dashboard/modules2.jsx"></script>
+  <script type="text/babel" src="dashboard/MoePanel.jsx"></script>
+
+  <script type="text/babel" data-presets="env,react">
+    const { useState, useEffect } = React;
+
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "theme": "light",
+      "accent": "#4f46e4",
+      "fontPair": "inter-mono",
+      "showMoe": true,
+      "density": "comfortable"
+    }/*EDITMODE-END*/;
+
+    const ACCENTS = {
+      "#c4f048": { bright: "#d4ff5a", dim: "#8ba832", glow: "rgba(196,240,72,0.2)" },
+      "#fb7185": { bright: "#ffa1b2", dim: "#be3855", glow: "rgba(251,113,133,0.2)" },
+      "#60a5fa": { bright: "#93c5fd", dim: "#2563eb", glow: "rgba(96,165,250,0.2)" },
+      "#a78bfa": { bright: "#c4b5fd", dim: "#7c3aed", glow: "rgba(167,139,250,0.2)" },
+      "#fbbf24": { bright: "#fcd34d", dim: "#b45309", glow: "rgba(251,191,36,0.2)" },
+      "#e538df": { bright: "#f472eb", dim: "#a31a9d", glow: "rgba(229,56,223,0.22)" },
+      "#4f46e4": { bright: "#7d75ee", dim: "#3730a3", glow: "rgba(79,70,228,0.22)" },
+    };
+
+    const deriveAccent = (hex) => {
+      if (ACCENTS[hex]) return ACCENTS[hex];
+      const h = hex.replace('#', '');
+      const r = parseInt(h.slice(0,2), 16), g = parseInt(h.slice(2,4), 16), b = parseInt(h.slice(4,6), 16);
+      const toHex = (v) => v.toString(16).padStart(2, '0');
+      return {
+        bright: `#${toHex(Math.min(255, Math.round(r + (255 - r) * 0.25)))}${toHex(Math.min(255, Math.round(g + (255 - g) * 0.25)))}${toHex(Math.min(255, Math.round(b + (255 - b) * 0.25)))}`,
+        dim: `#${toHex(Math.max(0, Math.round(r * 0.65)))}${toHex(Math.max(0, Math.round(g * 0.65)))}${toHex(Math.max(0, Math.round(b * 0.65)))}`,
+        glow: `rgba(${r},${g},${b},0.22)`,
+      };
+    };
+
+    const FONT_PAIRS = {
+      "inter-mono": { sans: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+      "inter-only": { sans: "'Inter', sans-serif", mono: "'Inter', sans-serif" },
+    };
+
+    const NAV = [
+      { section: 'Workspace' },
+      { id: 'today', label: 'Today', icon: 'home' },
+      { id: 'inbox', label: 'Inbox', icon: 'inbox', badge: '3' },
+      { id: 'moe-history', label: 'Moe history', icon: 'sparkle' },
+      { section: 'Sales' },
+      { id: 'pipeline', label: 'Pipeline', icon: 'pipeline' },
+      { id: 'proposals', label: 'Proposals', icon: 'proposal' },
+      { id: 'contracts', label: 'Contracts', icon: 'contract' },
+      { id: 'invoices', label: 'Invoices', icon: 'invoice', badge: '3' },
+      { section: 'Delivery' },
+      { id: 'projects', label: 'Projects', icon: 'project' },
+      { id: 'tasks', label: 'Tasks', icon: 'check' },
+      { id: 'time', label: 'Time', icon: 'time' },
+      { section: 'Connect' },
+      { id: 'scheduling', label: 'Scheduling', icon: 'calendar' },
+      { id: 'forms', label: 'Forms', icon: 'form' },
+      { id: 'portal', label: 'Client portal', icon: 'portal' },
+      { id: 'automations', label: 'Automations', icon: 'workflow' },
+    ];
+
+    const MODULES = {
+      today: { Component: TodayModule, crumb: 'Today' },
+      inbox: { Component: InboxModule, crumb: 'Inbox' },
+      pipeline: { Component: PipelineModule, crumb: 'Pipeline' },
+      proposals: { Component: ProposalsModule, crumb: 'Proposals' },
+      contracts: { Component: ContractsModule, crumb: 'Contracts' },
+      invoices: { Component: InvoicesModule, crumb: 'Invoices' },
+      projects: { Component: ProjectsModule, crumb: 'Projects' },
+      tasks: { Component: TasksModule, crumb: 'Tasks' },
+      time: { Component: TimeModule, crumb: 'Time' },
+      scheduling: { Component: SchedulingModule, crumb: 'Scheduling' },
+      forms: { Component: FormsModule, crumb: 'Forms' },
+      portal: { Component: PortalModule, crumb: 'Portal' },
+      automations: { Component: AutomationsModule, crumb: 'Automations' },
+      'moe-history': { Component: TodayModule, crumb: 'Moe history' },
+    };
+
+    const CommandPalette = ({ open, onClose }) => {
+      if (!open) return null;
+      const [q, setQ] = useState('');
+      const items = [
+        { section: 'Moe actions', items: [
+          { label: 'Invoice last week\'s hours', kbd: '↵', icon: 'sparkle' },
+          { label: 'Draft chases for overdue', icon: 'sparkle' },
+          { label: 'Book me 30 min Thursday', icon: 'sparkle' },
+        ]},
+        { section: 'Navigate', items: [
+          { label: 'Pipeline', icon: 'pipeline', kbd: 'G P' },
+          { label: 'Invoices', icon: 'invoice', kbd: 'G I' },
+          { label: 'Inbox', icon: 'inbox', kbd: 'G E' },
+        ]},
+        { section: 'Create', items: [
+          { label: 'New deal', icon: 'plus', kbd: 'C D' },
+          { label: 'New invoice', icon: 'plus', kbd: 'C I' },
+          { label: 'New proposal', icon: 'plus', kbd: 'C P' },
+        ]},
+      ];
+      return (
+        <div className="cmd-overlay" onClick={onClose}>
+          <div className="cmd-palette" onClick={e => e.stopPropagation()}>
+            <div className="cmd-input">
+              <MoeIcon size={20} state="listening" />
+              <input autoFocus value={q} onChange={e => setQ(e.target.value)} placeholder="Ask Moe or jump to…" />
+              <span className="kbd">esc</span>
+            </div>
+            <div className="cmd-results">
+              {items.map((s, i) => (
+                <div key={i}>
+                  <div className="cmd-section">{s.section}</div>
+                  {s.items.map((it, j) => (
+                    <div key={j} className="cmd-item">
+                      <Icon name={it.icon} size={14} stroke={it.icon === 'sparkle' ? 'var(--lime)' : 'currentColor'} />
+                      <span>{it.label}</span>
+                      {it.kbd && <span className="kbd">{it.kbd}</span>}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const App = () => {
+      const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+      const [active, setActive] = useState('today');
+      const [cmdOpen, setCmdOpen] = useState(false);
+
+      useEffect(() => {
+        document.body.classList.toggle('theme-light', tweaks.theme === 'light');
+        const a = deriveAccent(tweaks.accent);
+        const r = document.documentElement;
+        r.style.setProperty('--lime', tweaks.accent);
+        r.style.setProperty('--lime-bright', a.bright);
+        r.style.setProperty('--lime-dim', a.dim);
+        r.style.setProperty('--lime-glow', a.glow);
+        const fp = FONT_PAIRS[tweaks.fontPair] || FONT_PAIRS["inter-mono"];
+        r.style.setProperty('--font-sans', fp.sans);
+        r.style.setProperty('--font-mono', fp.mono);
+      }, [tweaks.theme, tweaks.accent, tweaks.fontPair]);
+
+      useEffect(() => {
+        const onKey = (e) => {
+          if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); setCmdOpen(true); }
+          if (e.key === 'Escape') setCmdOpen(false);
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+      }, []);
+
+      const Mod = MODULES[active]?.Component || TodayModule;
+      const crumb = MODULES[active]?.crumb || 'Today';
+
+      return (
+        <div className={`app ${tweaks.showMoe ? '' : 'no-moe'}`} data-screen-label={`Dashboard / ${crumb}`}>
+          <aside className="sidebar">
+            <div className="sidebar-header">
+              <div className="workspace-switcher">
+                <div className="workspace-icon">H</div>
+                <div className="workspace-name">Halstead Studio</div>
+                <Icon name="chevron" size={14} />
+              </div>
+            </div>
+            <div className="sidebar-search">
+              <div className="search-bar" onClick={() => setCmdOpen(true)}>
+                <Icon name="search" size={13} />
+                <input placeholder="Search or ask Moe…" readOnly />
+                <span className="kbd">⌘K</span>
+              </div>
+            </div>
+            <div className="sidebar-nav">
+              {NAV.map((item, i) => item.section ? (
+                <div key={i} className="nav-section-title">{item.section}</div>
+              ) : (
+                <div key={item.id} onClick={() => setActive(item.id)} className={`nav-item ${active === item.id ? 'active' : ''}`}>
+                  <Icon name={item.icon} size={15} />
+                  <span>{item.label}</span>
+                  {item.badge && <span className="badge">{item.badge}</span>}
+                </div>
+              ))}
+            </div>
+            <div className="sidebar-footer">
+              <Avatar name="Sarah Chen" size={32} />
+              <div className="me-info">
+                <div className="me-name">Sarah Chen</div>
+                <div className="me-plan">Team plan · 5 seats</div>
+              </div>
+              <button className="icon-btn"><Icon name="settings" size={14} /></button>
+            </div>
+          </aside>
+
+          <main className="main">
+            <header className="main-header">
+              <div className="crumbs">
+                <span className="crumb"><Icon name="home" size={13} /> Halstead</span>
+                <span className="sep">/</span>
+                <span className="crumb crumb-current">{crumb}</span>
+              </div>
+              <div className="main-actions">
+                <button className="icon-btn" title="Search" onClick={() => setCmdOpen(true)}><Icon name="search" size={15} /></button>
+                <button className="icon-btn has-dot" title="Notifications"><Icon name="bell" size={15} /></button>
+                <button className="btn sm" onClick={() => setCmdOpen(true)}><Icon name="sparkle" size={13} stroke="var(--lime)" /> Ask Moe <span className="kbd" style={{ marginLeft: 4 }}>⌘K</span></button>
+                <a href="CRMOS Marketing Site.html" className="btn sm"><Icon name="globe" size={13} /> Site</a>
+              </div>
+            </header>
+            <div className="main-body">
+              <Mod />
+            </div>
+          </main>
+
+          <MoePanel visible={tweaks.showMoe} />
+
+          <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
+
+          <TweaksPanel title="Tweaks">
+            <TweakSection title="Theme">
+              <TweakRadio
+                label="Mode"
+                value={tweaks.theme}
+                options={[{ value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }]}
+                onChange={v => setTweak('theme', v)}
+              />
+            </TweakSection>
+            <TweakSection title="Accent">
+              <TweakColor
+                label="Color"
+                value={tweaks.accent}
+                onChange={v => setTweak('accent', v)}
+                presets={Object.keys(ACCENTS)}
+              />
+            </TweakSection>
+            <TweakSection title="Moe">
+              <TweakToggle
+                label="Show Moe panel"
+                value={tweaks.showMoe}
+                onChange={v => setTweak('showMoe', v)}
+              />
+            </TweakSection>
+            <TweakSection title="Type">
+              <TweakRadio
+                label="Pairing"
+                value={tweaks.fontPair}
+                options={[
+                  { value: 'inter-mono', label: 'Inter + JB Mono' },
+                  { value: 'inter-only', label: 'Inter only' },
+                ]}
+                onChange={v => setTweak('fontPair', v)}
+              />
+            </TweakSection>
+          </TweaksPanel>
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

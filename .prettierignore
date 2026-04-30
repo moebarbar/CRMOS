@@ -1,0 +1,13 @@
+node_modules
+.next
+.turbo
+dist
+build
+coverage
+playwright-report
+test-results
+*.tsbuildinfo
+pnpm-lock.yaml
+.vercel
+**/generated/**
+**/.prisma/**

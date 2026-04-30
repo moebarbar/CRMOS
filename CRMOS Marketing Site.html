@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRMOS — Run your whole business. Or tell Moe.</title>
+  <link rel="stylesheet" href="marketing/marketing.css?v=2" />
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <filter id="highlight-roughen">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" />
+        <feDisplacementMap in="SourceGraphic" scale="3" />
+      </filter>
+    </defs>
+  </svg>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="shared/MoeIcon.jsx"></script>
+  <script type="text/babel" src="shared/ui.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="marketing/hero.jsx?v=2"></script>
+  <script type="text/babel" src="marketing/sections.jsx?v=2"></script>
+  <script type="text/babel" src="marketing/pages.jsx?v=2"></script>
+
+  <script type="text/babel" data-presets="env,react">
+    const { useState, useEffect } = React;
+
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "theme": "light",
+      "accent": "#4f46e4",
+      "fontPair": "inter-mono",
+      "heroVariant": "split",
+      "density": "comfortable"
+    }/*EDITMODE-END*/;
+
+    const ACCENTS = {
+      "#c4f048": { bright: "#d4ff5a", dim: "#8ba832", glow: "rgba(196,240,72,0.2)" },
+      "#fb7185": { bright: "#ffa1b2", dim: "#be3855", glow: "rgba(251,113,133,0.2)" },
+      "#60a5fa": { bright: "#93c5fd", dim: "#2563eb", glow: "rgba(96,165,250,0.2)" },
+      "#a78bfa": { bright: "#c4b5fd", dim: "#7c3aed", glow: "rgba(167,139,250,0.2)" },
+      "#fbbf24": { bright: "#fcd34d", dim: "#b45309", glow: "rgba(251,191,36,0.2)" },
+      "#e538df": { bright: "#f472eb", dim: "#a31a9d", glow: "rgba(229,56,223,0.22)" },
+      "#4f46e4": { bright: "#7d75ee", dim: "#3730a3", glow: "rgba(79,70,228,0.22)" },
+    };
+
+    // Derive bright/dim/glow for any hex if not in dict
+    const deriveAccent = (hex) => {
+      if (ACCENTS[hex]) return ACCENTS[hex];
+      const h = hex.replace('#', '');
+      const r = parseInt(h.slice(0,2), 16), g = parseInt(h.slice(2,4), 16), b = parseInt(h.slice(4,6), 16);
+      const lighten = (v) => Math.min(255, Math.round(v + (255 - v) * 0.25));
+      const darken = (v) => Math.max(0, Math.round(v * 0.65));
+      const toHex = (v) => v.toString(16).padStart(2, '0');
+      return {
+        bright: `#${toHex(lighten(r))}${toHex(lighten(g))}${toHex(lighten(b))}`,
+        dim: `#${toHex(darken(r))}${toHex(darken(g))}${toHex(darken(b))}`,
+        glow: `rgba(${r},${g},${b},0.22)`,
+      };
+    };
+
+    const FONT_PAIRS = {
+      "inter-mono": { sans: "'Inter', 'Inter Fallback', Roboto, Arial, sans-serif", mono: "'JetBrains Mono', ui-monospace, monospace" },
+      "inter-only": { sans: "'Inter', sans-serif", mono: "'Inter', sans-serif" },
+    };
+
+    const Nav = ({ route }) => (
+      <>
+        <div className="announce-bar mono">
+          <span><span className="ann-pill">NEW</span> Moe v2 ships with voice-to-action — <a href="#/changelog">read the notes →</a></span>
+        </div>
+        <nav className="nav">
+          <div className="nav-inner">
+            <a href="#/" style={{ textDecoration: 'none', color: 'inherit' }}><Logo size={22} /></a>
+            <div className="nav-links">
+              <a href="#/product" className={route === 'product' ? 'active' : ''}>Product</a>
+              <a href="#/pricing" className={route === 'pricing' ? 'active' : ''}>Pricing</a>
+              <a href="#/agencies" className={route === 'agencies' ? 'active' : ''}>For Agencies</a>
+              <a href="#/customers" className={route === 'customers' ? 'active' : ''}>Customers</a>
+              <a href="#/changelog" className={route === 'changelog' ? 'active' : ''}>Changelog</a>
+            </div>
+            <div className="nav-cta">
+              <a href="#/login" className="btn ghost sm">Log in</a>
+              <a href="dashboard.html" className="btn sm">Demo dashboard</a>
+              <a href="#/signup" className="btn primary sm">Start free</a>
+            </div>
+          </div>
+        </nav>
+      </>
+    );
+
+    const Marquee = () => (
+      <div className="marquee-strip">
+        <div className="marquee-track mono">
+          {[...Array(2)].flatMap((_, k) => [
+            <span key={`a${k}`}>Replaces HubSpot <span className="star">★</span></span>,
+            <span key={`b${k}`}>Replaces Asana <span className="star">★</span></span>,
+            <span key={`c${k}`}>Replaces FreshBooks <span className="star">★</span></span>,
+            <span key={`d${k}`}>Replaces DocuSign <span className="star">★</span></span>,
+            <span key={`e${k}`}>Replaces Calendly <span className="star">★</span></span>,
+            <span key={`f${k}`}>Replaces Toggl <span className="star">★</span></span>,
+            <span key={`g${k}`}>Replaces Zapier <span className="star">★</span></span>,
+            <span key={`h${k}`}>Replaces Typeform <span className="star">★</span></span>,
+          ])}
+        </div>
+      </div>
+    );
+
+    const App = () => {
+      const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+      const [route, setRoute] = useState((location.hash || '#/').slice(2).split('/')[0] || 'home');
+
+      useEffect(() => {
+        const onHash = () => {
+          const r = (location.hash || '#/').slice(2).split('/')[0] || 'home';
+          setRoute(r);
+          window.scrollTo(0, 0);
+        };
+        window.addEventListener('hashchange', onHash);
+        return () => window.removeEventListener('hashchange', onHash);
+      }, []);
+
+      // Apply theme + accent vars
+      useEffect(() => {
+        document.body.classList.toggle('theme-light', tweaks.theme === 'light');
+        const a = deriveAccent(tweaks.accent);
+        const r = document.documentElement;
+        r.style.setProperty('--lime', tweaks.accent);
+        r.style.setProperty('--lime-bright', a.bright);
+        r.style.setProperty('--lime-dim', a.dim);
+        r.style.setProperty('--lime-glow', a.glow);
+        const fp = FONT_PAIRS[tweaks.fontPair] || FONT_PAIRS["inter-mono"];
+        r.style.setProperty('--font-sans', fp.sans);
+        r.style.setProperty('--font-mono', fp.mono);
+      }, [tweaks.theme, tweaks.accent, tweaks.fontPair]);
+
+      const renderHero = () => {
+        if (tweaks.heroVariant === 'terminal') return <HeroTerminal />;
+        if (tweaks.heroVariant === 'editorial') return <HeroEditorial />;
+        return <HeroSplit />;
+      };
+
+      const Home = () => (
+        <>
+          {renderHero()}
+          <Marquee />
+          <Logos />
+          <FeatureGrid />
+          <MoeShowcase />
+          <FlowDiagram />
+          <Personas />
+          <Pricing />
+          <FAQ />
+          <CTA />
+        </>
+      );
+
+      const PageRouter = () => {
+        switch (route) {
+          case 'product': return <ProductPage />;
+          case 'pricing': return <div><Pricing /><FAQ /></div>;
+          case 'agencies': return <AgenciesPage />;
+          case 'customers': return <CustomersPage />;
+          case 'changelog': return <ChangelogPage />;
+          case 'login':
+          case 'signup': return <LoginPage />;
+          default: return <Home />;
+        }
+      };
+
+      const showFooter = !['login', 'signup'].includes(route);
+
+      return (
+        <>
+          {!['login', 'signup'].includes(route) && <Nav route={route} />}
+          <PageRouter />
+          {showFooter && <Footer />}
+
+          <TweaksPanel title="Tweaks">
+            <TweakSection title="Theme">
+              <TweakRadio
+                label="Mode"
+                value={tweaks.theme}
+                options={[{ value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }]}
+                onChange={v => setTweak('theme', v)}
+              />
+            </TweakSection>
+            <TweakSection title="Accent">
+              <TweakColor
+                label="Color"
+                value={tweaks.accent}
+                onChange={v => setTweak('accent', v)}
+                presets={Object.keys(ACCENTS)}
+              />
+            </TweakSection>
+            <TweakSection title="Hero">
+              <TweakSelect
+                label="Variant"
+                value={tweaks.heroVariant}
+                options={[
+                  { value: 'split', label: 'Split — copy + Moe demo' },
+                  { value: 'terminal', label: 'Terminal — moe init' },
+                  { value: 'editorial', label: 'Editorial — big type' },
+                ]}
+                onChange={v => setTweak('heroVariant', v)}
+              />
+            </TweakSection>
+            <TweakSection title="Type">
+              <TweakRadio
+                label="Pairing"
+                value={tweaks.fontPair}
+                options={[
+                  { value: 'inter-mono', label: 'Inter + JB Mono' },
+                  { value: 'inter-only', label: 'Inter only' },
+                ]}
+                onChange={v => setTweak('fontPair', v)}
+              />
+            </TweakSection>
+            <TweakSection title="Try the app">
+              <a href="dashboard.html" className="btn primary" style={{ width: '100%', justifyContent: 'center' }}>
+                Open dashboard <Icon name="arrow" size={14} />
+              </a>
+            </TweakSection>
+          </TweaksPanel>
+        </>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

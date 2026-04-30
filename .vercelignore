@@ -1,0 +1,6 @@
+e2e
+playwright-report
+test-results
+**/__tests__
+**/*.test.ts
+**/*.test.tsx

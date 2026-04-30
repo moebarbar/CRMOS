@@ -1,0 +1,35 @@
+{
+  "name": "chiefos",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "web": "turbo run dev --filter=@chiefos/web --",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "check": "turbo run check",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e --filter=@chiefos/web",
+    "fix": "turbo run fix",
+    "db:migrate": "pnpm --filter @chiefos/db migrate",
+    "db:push": "pnpm --filter @chiefos/db push",
+    "db:studio": "pnpm --filter @chiefos/db studio",
+    "db:seed": "pnpm --filter @chiefos/db seed",
+    "db:reset": "pnpm --filter @chiefos/db reset",
+    "db:generate": "pnpm --filter @chiefos/db generate",
+    "inngest:dev": "pnpm --filter @chiefos/web inngest:dev",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\""
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "typescript": "^5.7.3",
+    "@types/node": "^22.10.5"
+  }
+}

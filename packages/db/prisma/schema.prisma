@@ -1,0 +1,284 @@
+// ChiefOS — Phase 0 schema (Foundation)
+// Single source of truth: ../../SCHEMA.md
+// Add models here as phases land. Never drift from SCHEMA.md.
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  extensions = [pgcrypto, pg_trgm]
+}
+
+// =====================================================================
+// 1. Identity & Tenancy
+// =====================================================================
+
+model User {
+  id                 String    @id @default(cuid())
+  clerkUserId        String    @unique
+  email              String    @unique
+  firstName          String?
+  lastName           String?
+  avatarUrl          String?
+  timezone           String    @default("UTC")
+  locale             String    @default("en")
+  defaultWorkspaceId String?
+
+  memberships     Membership[]
+  ownedWorkspaces Workspace[]    @relation("WorkspaceOwner")
+  notifications   Notification[]
+  apiKeys         ApiKey[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clerkUserId])
+}
+
+model Workspace {
+  id      String @id @default(cuid())
+  name    String
+  slug    String @unique
+  ownerId String
+
+  // Branding
+  logoUrl       String?
+  faviconUrl    String?
+  brandPrimary  String  @default("#7c3aed")
+  brandAccent   String  @default("#10b981")
+  hideBranding  Boolean @default(false)
+  customCss     String? @db.Text
+
+  // Localization
+  defaultCurrency String @default("USD")
+  timezone        String @default("UTC")
+  locale          String @default("en")
+  weekStart       Int    @default(1) // 0 = Sun, 1 = Mon
+  dateFormat      String @default("yyyy-MM-dd")
+
+  // Email
+  fromEmail           String?
+  fromName            String?
+  emailDomainVerified Boolean @default(false)
+
+  // Plan
+  planId         String    @default("free")
+  trialEndsAt    DateTime?
+  subscriptionId String?
+  aiCreditsUsed  Int       @default(0)
+  aiCreditsLimit Int       @default(50)
+  storageUsedMb  Int       @default(0)
+  storageLimitMb Int       @default(500)
+
+  // Settings
+  settings Json @default("{}")
+
+  owner       User              @relation("WorkspaceOwner", fields: [ownerId], references: [id])
+  memberships Membership[]
+  domains     WorkspaceDomain[]
+  apiKeys     ApiKey[]
+  customRoles CustomRole[]
+  activities  Activity[]
+  auditLogs   AuditLog[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([slug])
+  @@index([ownerId])
+}
+
+model WorkspaceDomain {
+  id          String     @id @default(cuid())
+  workspaceId String
+  hostname    String     @unique // app.youragency.com
+  type        DomainType
+  verified    Boolean    @default(false)
+  sslIssued   Boolean    @default(false)
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([workspaceId])
+}
+
+model Membership {
+  id           String  @id @default(cuid())
+  userId       String
+  workspaceId  String
+  role         Role
+  customRoleId String?
+
+  // Per-member settings
+  notificationsEmail Boolean  @default(true)
+  notificationsPush  Boolean  @default(true)
+  cost               Decimal? @db.Decimal(12, 2)
+  bill               Decimal? @db.Decimal(12, 2)
+
+  // For CONTRACTOR role
+  scopedProjectIds String[] @default([])
+  // For CLIENT role
+  contactId String?
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace  Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  customRole CustomRole? @relation(fields: [customRoleId], references: [id])
+
+  invitedAt  DateTime  @default(now())
+  acceptedAt DateTime?
+
+  @@unique([userId, workspaceId])
+  @@index([workspaceId, role])
+}
+
+model CustomRole {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  permissions String[] // ["contacts:read", "deals:write", ...]
+
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  memberships Membership[]
+
+  createdAt DateTime @default(now())
+
+  @@index([workspaceId])
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  workspaceId String
+  userId      String
+  name        String
+  prefix      String
+  hash        String    @unique
+  scopes      String[]
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime  @default(now())
+  revokedAt DateTime?
+
+  @@index([workspaceId])
+  @@index([hash])
+}
+
+// =====================================================================
+// 17. Activity, Audit Log, Notifications
+// =====================================================================
+
+model Activity {
+  id          String  @id @default(cuid())
+  workspaceId String
+  actorId     String? // userId; null = system; 'moe' = AI agent
+  actorType   String  @default("user") // 'user' | 'system' | 'moe' | 'integration'
+
+  verb       String // 'created' | 'updated' | 'sent' | 'paid' | 'signed' | 'commented'
+  targetType ActivityTargetType
+  targetId   String
+
+  payload Json?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([workspaceId, targetType, targetId, createdAt])
+  @@index([workspaceId, actorId, createdAt])
+}
+
+model AuditLog {
+  // append-only, never edited
+  id          String  @id @default(cuid())
+  workspaceId String
+  userId      String?
+
+  action     String
+  resource   String
+  resourceId String?
+
+  ip        String?
+  userAgent String?
+  diff      Json?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([workspaceId, createdAt])
+  @@index([workspaceId, action, createdAt])
+}
+
+model Notification {
+  id          String @id @default(cuid())
+  userId      String
+  workspaceId String
+
+  type  String
+  title String
+  body  String?
+  link  String?
+
+  sourceType ActivityTargetType?
+  sourceId   String?
+
+  readAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, readAt])
+}
+
+// =====================================================================
+// Enums
+// =====================================================================
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+  CONTRACTOR
+  CLIENT
+  CUSTOM
+}
+
+enum DomainType {
+  APP
+  PORTAL
+  EMAIL
+}
+
+// Full enum included now to avoid future migrations just to add values.
+// Tables backing each value land in their respective phases.
+enum ActivityTargetType {
+  CONTACT
+  COMPANY
+  DEAL
+  PROJECT
+  TASK
+  PROPOSAL
+  CONTRACT
+  INVOICE
+  PAYMENT
+  FORM
+  FORM_SUBMISSION
+  BOOKING
+  FILE
+  CHANNEL
+  WIKI_PAGE
+  WORKFLOW
+  WORKSPACE
+  USER
+}
