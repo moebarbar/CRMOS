@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from '@/components/theme-provider';
+import { PostHogClient } from '@/components/observability/PostHogClient';
 import { Toaster } from '@/components/ui/sonner';
 import '@/styles/globals.css';
 
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
             <Toaster />
+            <PostHogClient />
           </ThemeProvider>
         </body>
       </html>

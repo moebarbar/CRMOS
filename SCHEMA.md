@@ -158,7 +158,12 @@ model Membership {
   
   // For CLIENT role: tied to a contact
   contactId       String?
-  
+
+  // Invite handshake — opaque token emailed to invitee, cleared on accept
+  inviteToken     String?       @unique
+  inviteEmail     String?
+  inviteExpiresAt DateTime?
+
   user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspace       Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   customRole      CustomRole?   @relation(fields: [customRoleId], references: [id])

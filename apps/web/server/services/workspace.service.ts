@@ -6,6 +6,7 @@ import type {
   CreateWorkspaceInput,
   UpdateWorkspaceInput,
 } from '@chiefos/shared/zod/workspace';
+import { inngest } from '@/lib/inngest/client';
 import { activityService } from './activity.service';
 
 export const workspaceService = {
@@ -46,6 +47,11 @@ export const workspaceService = {
       { ...ctx, workspace },
       { verb: 'created', targetType: 'WORKSPACE', targetId: workspace.id },
     );
+
+    await inngest.send({
+      name: 'app/workspace.created',
+      data: { workspaceId: workspace.id, ownerUserId: ctx.user.id },
+    });
 
     return workspace;
   },
