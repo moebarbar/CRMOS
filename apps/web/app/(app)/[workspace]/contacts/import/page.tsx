@@ -12,7 +12,7 @@ export default function ImportContactsPage({
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Import contacts</h1>
         <p className="text-sm text-muted-foreground">
-          Upload a CSV. We'll dedupe by email and auto-link contacts to companies by domain.
+          Upload a CSV. We&apos;ll dedupe by email and auto-link contacts to companies by domain.
         </p>
       </div>
       <ContactImportWizard workspaceSlug={params.workspace} />

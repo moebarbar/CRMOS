@@ -8,7 +8,7 @@ export default function NotFound() {
         <p className="text-sm font-medium text-muted-foreground">404</p>
         <h1 className="text-3xl font-semibold tracking-tight">Not found</h1>
         <p className="mt-2 max-w-md text-sm text-muted-foreground">
-          That workspace or page doesn't exist, or you don't have access.
+          That workspace or page doesn&apos;t exist, or you don&apos;t have access.
         </p>
       </div>
       <Button asChild>

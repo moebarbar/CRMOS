@@ -1,5 +1,5 @@
 import 'server-only';
-import type { ActivityTargetType } from '@chiefos/db';
+import { Prisma, type ActivityTargetType } from '@chiefos/db';
 import type { Context } from '@/server/trpc/context';
 
 export interface LogActivityInput {
@@ -24,7 +24,7 @@ export const activityService = {
         verb: input.verb,
         targetType: input.targetType,
         targetId: input.targetId,
-        payload: input.payload ?? undefined,
+        payload: (input.payload ?? undefined) as Prisma.InputJsonValue | undefined,
       },
     });
   },

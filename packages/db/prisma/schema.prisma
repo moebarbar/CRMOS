@@ -337,6 +337,51 @@ model Note {
   @@index([workspaceId, authorId])
 }
 
+model CustomFieldDef {
+  id          String @id @default(cuid())
+  workspaceId String
+
+  entity       CustomFieldEntity
+  key          String
+  label        String
+  type         CustomFieldType
+  options      Json?
+  required     Boolean @default(false)
+  defaultValue Json?
+  position     Int     @default(0)
+  showInList   Boolean @default(false)
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([workspaceId, entity, key])
+  @@index([workspaceId, entity])
+}
+
+model SavedView {
+  id          String @id @default(cuid())
+  workspaceId String
+  userId      String
+
+  entity  String // 'contact' | 'company' | 'deal' | 'project' | …
+  name    String
+  filters Json     @default("{}")
+  sort    String?
+  columns String[] @default([])
+
+  isShared Boolean @default(false)
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([workspaceId, userId, entity])
+}
+
 // =====================================================================
 // 17. Activity, Audit Log, Notifications
 // =====================================================================

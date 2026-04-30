@@ -34,6 +34,7 @@ async function ship(payload: LogPayload) {
 function emit(level: Level, message: string, meta?: Record<string, unknown>) {
   const payload: LogPayload = { level, message, meta, ts: new Date().toISOString() };
   if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line no-console
     const fn = level === 'error' ? console.error : level === 'warn' ? console.warn : console.log;
     fn(`[${level}] ${message}`, meta ?? '');
   }

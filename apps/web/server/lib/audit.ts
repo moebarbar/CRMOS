@@ -1,5 +1,6 @@
 import 'server-only';
 import { headers } from 'next/headers';
+import { Prisma } from '@chiefos/db';
 import type { Context } from '@/server/trpc/context';
 
 export interface AuditInput {
@@ -30,7 +31,7 @@ export async function writeAudit(
       resourceId: input.resourceId ?? null,
       ip,
       userAgent,
-      diff: input.diff ?? undefined,
+      diff: (input.diff ?? undefined) as Prisma.InputJsonValue | undefined,
     },
   });
 }
