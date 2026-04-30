@@ -33,6 +33,7 @@ model User {
   ownedWorkspaces Workspace[]    @relation("WorkspaceOwner")
   notifications   Notification[]
   apiKeys         ApiKey[]
+  savedViews      SavedView[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -85,10 +86,12 @@ model Workspace {
   customRoles CustomRole[]
   activities  Activity[]
   auditLogs   AuditLog[]
-  contacts    Contact[]
-  companies   Company[]
-  tags        Tag[]
-  notes       Note[]
+  contacts        Contact[]
+  companies       Company[]
+  tags            Tag[]
+  notes           Note[]
+  customFieldDefs CustomFieldDef[]
+  savedViews      SavedView[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -438,6 +441,35 @@ enum TagScope {
   DEAL
   PROJECT
   TASK
+  FILE
+}
+
+enum CustomFieldEntity {
+  CONTACT
+  COMPANY
+  DEAL
+  PROJECT
+  TASK
+  INVOICE
+  PROPOSAL
+}
+
+enum CustomFieldType {
+  TEXT
+  TEXTAREA
+  NUMBER
+  CURRENCY
+  DATE
+  DATETIME
+  BOOLEAN
+  SELECT
+  MULTI_SELECT
+  EMAIL
+  PHONE
+  URL
+  ADDRESS
+  USER
+  CONTACT
   FILE
 }
 

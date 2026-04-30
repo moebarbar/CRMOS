@@ -7,6 +7,7 @@ import type {
   UpdateCompanyInput,
 } from '@chiefos/shared/zod/company';
 import type { Context } from '@/server/trpc/context';
+import { validateAndCoerceCustomFields } from '@/server/lib/customFields';
 import { activityService } from './activity.service';
 
 type Ctx = Context & {
@@ -57,11 +58,15 @@ export const companyService = {
   },
 
   async create(ctx: Ctx, input: CreateCompanyInput) {
+    const { customFields, ...data } = input;
+    const coercedCustomFields = await validateAndCoerceCustomFields(ctx, 'COMPANY', customFields);
+
     const company = await ctx.prisma.company.create({
       data: {
-        ...input,
+        ...data,
+        customFields: coercedCustomFields as Prisma.InputJsonValue,
         workspaceId: ctx.workspace.id,
-        ownerId: input.ownerId ?? ctx.user.id,
+        ownerId: data.ownerId ?? ctx.user.id,
       },
     });
 
@@ -81,8 +86,21 @@ export const companyService = {
     });
     if (!existing) throw new TRPCError({ code: 'NOT_FOUND' });
 
-    const { id, ...data } = input;
-    const updated = await ctx.prisma.company.update({ where: { id }, data });
+    const { id, customFields, ...data } = input;
+    const coercedCustomFields =
+      customFields !== undefined
+        ? await validateAndCoerceCustomFields(ctx, 'COMPANY', customFields)
+        : undefined;
+
+    const updated = await ctx.prisma.company.update({
+      where: { id },
+      data: {
+        ...data,
+        ...(coercedCustomFields !== undefined && {
+          customFields: coercedCustomFields as Prisma.InputJsonValue,
+        }),
+      },
+    });
 
     await activityService.log(ctx, {
       verb: 'updated',

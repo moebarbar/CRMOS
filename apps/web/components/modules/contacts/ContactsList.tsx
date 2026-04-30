@@ -11,22 +11,33 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { fullName, initials, relativeTime } from '@/lib/utils/format';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { SavedViewsPicker } from '@/components/modules/savedViews/SavedViewsPicker';
 
-const stages = ['', ...contactSchemas.LIFECYCLE_STAGES] as const;
+interface Filters {
+  search: string;
+  stage: '' | contactSchemas.LifecycleStage;
+  tagId: string;
+}
+
+const EMPTY: Filters = { search: '', stage: '', tagId: '' };
 
 export function ContactsList({ workspaceSlug }: { workspaceSlug: string }) {
-  const [search, setSearch] = useState('');
-  const [stage, setStage] = useState<(typeof stages)[number]>('');
+  const [filters, setFilters] = useState<Filters>(EMPTY);
+
+  const tags = trpc.tags.list.useQuery({ scope: 'CONTACT' }, { staleTime: 60_000 });
 
   const query = trpc.contacts.list.useQuery(
     {
-      search: search.trim() || undefined,
-      lifecycleStage: stage ? (stage as contactSchemas.LifecycleStage) : undefined,
+      search: filters.search.trim() || undefined,
+      lifecycleStage: filters.stage || undefined,
+      tagId: filters.tagId || undefined,
       limit: 50,
       sort: 'createdAt:desc',
     },
     { staleTime: 10_000 },
   );
+
+  const hasFilter = Boolean(filters.search || filters.stage || filters.tagId);
 
   return (
     <div className="space-y-4">
@@ -34,15 +45,17 @@ export function ContactsList({ workspaceSlug }: { workspaceSlug: string }) {
         <div className="relative flex-1 min-w-[240px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={filters.search}
+            onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
             placeholder="Search by name or email"
             className="pl-9"
           />
         </div>
         <select
-          value={stage}
-          onChange={(e) => setStage(e.target.value as (typeof stages)[number])}
+          value={filters.stage}
+          onChange={(e) =>
+            setFilters((f) => ({ ...f, stage: e.target.value as Filters['stage'] }))
+          }
           className="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
         >
           <option value="">All stages</option>
@@ -52,6 +65,33 @@ export function ContactsList({ workspaceSlug }: { workspaceSlug: string }) {
             </option>
           ))}
         </select>
+        <select
+          value={filters.tagId}
+          onChange={(e) => setFilters((f) => ({ ...f, tagId: e.target.value }))}
+          className="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
+          disabled={!tags.data || tags.data.length === 0}
+        >
+          <option value="">All tags</option>
+          {tags.data?.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.name}
+            </option>
+          ))}
+        </select>
+        <SavedViewsPicker
+          entity="contact"
+          filters={filters as unknown as Record<string, unknown>}
+          onApply={(f) => setFilters({ ...EMPTY, ...(f as Partial<Filters>) })}
+        />
+        {hasFilter && (
+          <Button variant="ghost" size="sm" onClick={() => setFilters(EMPTY)}>
+            Clear
+          </Button>
+        )}
+        <div className="flex-1" />
+        <Button asChild variant="outline">
+          <Link href={`/${workspaceSlug}/contacts/import`}>Import CSV</Link>
+        </Button>
         <Button asChild>
           <Link href={`/${workspaceSlug}/contacts/new`}>New contact</Link>
         </Button>
@@ -64,7 +104,7 @@ export function ContactsList({ workspaceSlug }: { workspaceSlug: string }) {
           {query.error.message}
         </div>
       ) : !query.data || query.data.items.length === 0 ? (
-        <EmptyState workspaceSlug={workspaceSlug} hasFilter={Boolean(search || stage)} />
+        <EmptyState workspaceSlug={workspaceSlug} hasFilter={hasFilter} />
       ) : (
         <ul className="divide-y rounded-lg border bg-card">
           {query.data.items.map((c) => (
@@ -140,11 +180,18 @@ function EmptyState({
         {hasFilter ? 'No contacts match those filters.' : 'No contacts yet.'}
       </p>
       <p className="mt-1 text-sm text-muted-foreground">
-        {hasFilter ? 'Clear filters or' : 'Get started by'} adding your first contact.
+        {hasFilter
+          ? 'Clear filters or add a new contact.'
+          : 'Get started by adding your first contact or importing a CSV.'}
       </p>
-      <Button asChild className="mt-4">
-        <Link href={`/${workspaceSlug}/contacts/new`}>New contact</Link>
-      </Button>
+      <div className="mt-4 flex justify-center gap-2">
+        <Button asChild>
+          <Link href={`/${workspaceSlug}/contacts/new`}>New contact</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href={`/${workspaceSlug}/contacts/import`}>Import CSV</Link>
+        </Button>
+      </div>
     </div>
   );
 }

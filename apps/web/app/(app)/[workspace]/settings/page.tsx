@@ -59,6 +59,36 @@ export default async function SettingsPage({
             </Link>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Tags</CardTitle>
+            <CardDescription>Color-coded labels for any record</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              className="text-sm font-medium text-primary hover:underline"
+              href={`/${params.workspace}/settings/tags`}
+            >
+              Manage tags →
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Custom fields</CardTitle>
+            <CardDescription>Track data unique to your business</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              className="text-sm font-medium text-primary hover:underline"
+              href={`/${params.workspace}/settings/fields`}
+            >
+              Manage custom fields →
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

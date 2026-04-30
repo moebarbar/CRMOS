@@ -4,4 +4,6 @@ export * as contact from './zod/contact';
 export * as company from './zod/company';
 export * as tag from './zod/tag';
 export * as note from './zod/note';
+export * as customField from './zod/customField';
+export * as savedView from './zod/savedView';
 export * from './constants';
