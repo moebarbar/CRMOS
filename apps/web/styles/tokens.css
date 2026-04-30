@@ -1,0 +1,142 @@
+/* CRMOS Design Tokens — Brand-themed via accent var */
+/* v3: light mode no longer hardcodes lime; accent flows from JS */
+:root {
+  /* Brand */
+  --lime: #c4f048;
+  --lime-bright: #d4ff5a;
+  --lime-dim: #8ba832;
+  --lime-glow: rgba(196, 240, 72, 0.2);
+
+  /* Dark surface stack */
+  --bg-0: #07090a;
+  --bg-1: #0c0f10;
+  --bg-2: #11171a;
+  --bg-3: #161e22;
+  --bg-4: #1d272c;
+  --line: #1f2a30;
+  --line-2: #2a3942;
+  --line-bright: #3a4d57;
+
+  /* Text */
+  --text-0: #e8f0e8;
+  --text-1: #b8c5bc;
+  --text-2: #7d8c84;
+  --text-3: #4f5d56;
+
+  /* Accents (semantic) */
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  --info: #60a5fa;
+  --ok: var(--lime);
+
+  /* Type */
+  --font-sans: 'Inter', 'Inter Fallback', Roboto, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-display: 'Inter', 'Inter Fallback', Roboto, Arial, sans-serif;
+
+  /* Radii */
+  --r-sm: 6px;
+  --r: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+
+  /* Shadows */
+  --shadow-1: 0 1px 0 rgba(255,255,255,0.04) inset, 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-glow: 0 0 0 1px rgba(196,240,72,0.3), 0 8px 32px rgba(196,240,72,0.15);
+}
+
+/* Light theme — warm cream paper with deep ink, accent stays user-set */
+.theme-light {
+  --bg-0: #f5f3eb;
+  --bg-1: #ffffff;
+  --bg-2: #f0ede2;
+  --bg-3: #e6e3d6;
+  --bg-4: #d8d4c4;
+  --line: #d8d4c4;
+  --line-2: #b8b3a0;
+  --line-bright: #807a65;
+  --text-0: #0a1108;
+  --text-1: #2a3326;
+  --text-2: #5b6356;
+  --text-3: #8a907f;
+  --shadow-1: 0 1px 0 rgba(255,255,255,0.6) inset, 0 1px 2px rgba(20,30,10,0.06);
+}
+
+/* Background grid + noise overlays — give every surface texture */
+.theme-light body {
+  background-image:
+    linear-gradient(to right, rgba(74,107,20,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(74,107,20,0.05) 1px, transparent 1px),
+    radial-gradient(ellipse at top, rgba(74,107,20,0.06), transparent 60%);
+  background-size: 32px 32px, 32px 32px, 100% 100%;
+}
+body {
+  background-image:
+    linear-gradient(to right, rgba(196,240,72,0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(196,240,72,0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-0);
+  color: var(--text-0);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+  letter-spacing: -0.01em;
+}
+::selection { background: var(--lime); color: #ffffff; }
+
+/* Common utilities */
+.mono { font-family: var(--font-mono); font-feature-settings: 'zero', 'ss02'; letter-spacing: 0; }
+.tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 8px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.02em;
+  background: var(--bg-2); color: var(--text-1); border: 1px solid var(--line);
+}
+.tag.lime { background: color-mix(in oklab, var(--lime) 15%, transparent); color: var(--lime); border-color: color-mix(in oklab, var(--lime) 30%, transparent); }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); display: inline-block; }
+.kbd {
+  font-family: var(--font-mono); font-size: 11px;
+  padding: 2px 6px; border-radius: 4px;
+  background: var(--bg-3); border: 1px solid var(--line-2);
+  color: var(--text-1);
+  box-shadow: 0 1px 0 var(--bg-4);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: var(--r);
+  font-family: var(--font-sans); font-size: 14px; font-weight: 500;
+  border: 1px solid var(--line-2); background: var(--bg-2); color: var(--text-0);
+  cursor: pointer; transition: transform 120ms ease, opacity 120ms ease, border-color 120ms ease;
+  text-decoration: none;
+}
+.btn:hover { background: var(--bg-3); border-color: var(--line-bright); }
+.btn.primary {
+  background: var(--lime); color: #ffffff;
+  border-color: var(--lime);
+  font-weight: 600;
+}
+.btn.primary:hover { background: var(--lime-bright); border-color: var(--lime-bright); color: #ffffff; }
+.btn.ghost { background: transparent; border-color: transparent; }
+.btn.ghost:hover { background: var(--bg-2); }
+.btn.sm { padding: 6px 10px; font-size: 13px; }
+.btn.lg { padding: 14px 22px; font-size: 15px; }
+
+/* Cards */
+.card {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+}
+
+/* Scrollbars (subtle) */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 10px; border: 2px solid var(--bg-0); }
+*::-webkit-scrollbar-thumb:hover { background: var(--line-bright); }

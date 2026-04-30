@@ -8,6 +8,8 @@ import { notesRouter } from './notes';
 import { activityRouter } from './activity';
 import { customFieldsRouter } from './customFields';
 import { savedViewsRouter } from './savedViews';
+import { pipelinesRouter } from './pipelines';
+import { dealsRouter } from './deals';
 
 export const appRouter = createTRPCRouter({
   workspace: workspaceRouter,
@@ -19,6 +21,8 @@ export const appRouter = createTRPCRouter({
   activity: activityRouter,
   customFields: customFieldsRouter,
   savedViews: savedViewsRouter,
+  pipelines: pipelinesRouter,
+  deals: dealsRouter,
 });
 
 export type AppRouter = typeof appRouter;

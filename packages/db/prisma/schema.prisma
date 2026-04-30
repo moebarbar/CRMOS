@@ -92,6 +92,8 @@ model Workspace {
   notes           Note[]
   customFieldDefs CustomFieldDef[]
   savedViews      SavedView[]
+  pipelines       Pipeline[]
+  deals           Deal[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -236,6 +238,7 @@ model Contact {
   company   Company?     @relation(fields: [companyId], references: [id])
   tags      ContactTag[]
   notes     Note[]
+  deals     Deal[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -274,6 +277,7 @@ model Company {
 
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   contacts  Contact[]
+  deals     Deal[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -358,6 +362,82 @@ model CustomFieldDef {
 
   @@unique([workspaceId, entity, key])
   @@index([workspaceId, entity])
+}
+
+// =====================================================================
+// 3. Sales Pipelines & Deals
+// =====================================================================
+
+model Pipeline {
+  id          String  @id @default(cuid())
+  workspaceId String
+  name        String
+  description String?
+  isDefault   Boolean @default(false)
+  position    Int     @default(0)
+
+  workspace Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  stages    PipelineStage[]
+  deals     Deal[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([workspaceId])
+}
+
+model PipelineStage {
+  id          String  @id @default(cuid())
+  pipelineId  String
+  name        String
+  position    Int
+  probability Float   @default(0.5) // 0..1, used for forecast
+  color       String  @default("#94a3b8")
+  rotInDays   Int? // alert if a deal sits this long
+  isWon       Boolean @default(false)
+  isLost      Boolean @default(false)
+
+  pipeline Pipeline @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  deals    Deal[]
+
+  @@index([pipelineId])
+}
+
+model Deal {
+  id          String  @id @default(cuid())
+  workspaceId String
+  pipelineId  String
+  stageId     String
+  contactId   String?
+  companyId   String?
+  ownerId     String?
+
+  title             String
+  value             Decimal    @default(0) @db.Decimal(12, 2)
+  currency          String     @default("USD")
+  expectedCloseDate DateTime?
+  status            DealStatus @default(OPEN)
+  lostReason        String?
+  source            String?
+  description       String?    @db.Text
+
+  customFields Json @default("{}")
+
+  closedAt DateTime?
+
+  workspace Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  pipeline  Pipeline      @relation(fields: [pipelineId], references: [id])
+  stage     PipelineStage @relation(fields: [stageId], references: [id])
+  contact   Contact?      @relation(fields: [contactId], references: [id])
+  company   Company?      @relation(fields: [companyId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([workspaceId, status])
+  @@index([workspaceId, pipelineId, stageId])
+  @@index([workspaceId, ownerId])
 }
 
 model SavedView {
@@ -487,6 +567,12 @@ enum TagScope {
   PROJECT
   TASK
   FILE
+}
+
+enum DealStatus {
+  OPEN
+  WON
+  LOST
 }
 
 enum CustomFieldEntity {

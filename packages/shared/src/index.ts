@@ -6,4 +6,6 @@ export * as tag from './zod/tag';
 export * as note from './zod/note';
 export * as customField from './zod/customField';
 export * as savedView from './zod/savedView';
+export * as pipeline from './zod/pipeline';
+export * as deal from './zod/deal';
 export * from './constants';

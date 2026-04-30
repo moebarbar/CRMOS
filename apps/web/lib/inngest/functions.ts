@@ -1,4 +1,5 @@
 import { WelcomeEmail } from '@chiefos/emails';
+import { DEFAULT_SALES_STAGES } from '@chiefos/shared/zod/pipeline';
 import { prisma } from '@/lib/db/prisma';
 import { sendEmail } from '@/lib/integrations/resend';
 import { log } from '@/lib/observability/logger';
@@ -29,6 +30,23 @@ export const workspaceCreated = inngest.createFunction(
       return { ok: false };
     }
 
+    await step.run('seed-default-pipeline', async () => {
+      const existing = await prisma.pipeline.findFirst({
+        where: { workspaceId: ws.id },
+        select: { id: true },
+      });
+      if (existing) return { skipped: true };
+      await prisma.pipeline.create({
+        data: {
+          workspaceId: ws.id,
+          name: 'Sales',
+          isDefault: true,
+          stages: { create: DEFAULT_SALES_STAGES },
+        },
+      });
+      return { created: true };
+    });
+
     await step.run('send-welcome-email', () =>
       sendEmail({
         to: ws.owner.email,
@@ -45,4 +63,26 @@ export const workspaceCreated = inngest.createFunction(
   },
 );
 
-export const functions = [healthPing, workspaceCreated];
+export const dealWon = inngest.createFunction(
+  { id: 'deal-won', name: 'Deal won' },
+  { event: 'app/deal.won' },
+  async ({ event, step }) => {
+    await step.run('log', () => ({ msg: `deal ${event.data.dealId} won` }));
+    // Future: notify owner, create thank-you task, generate invoice draft.
+    return { ok: true };
+  },
+);
+
+export const dealLost = inngest.createFunction(
+  { id: 'deal-lost', name: 'Deal lost' },
+  { event: 'app/deal.lost' },
+  async ({ event, step }) => {
+    await step.run('log', () => ({
+      msg: `deal ${event.data.dealId} lost`,
+      reason: event.data.reason,
+    }));
+    return { ok: true };
+  },
+);
+
+export const functions = [healthPing, workspaceCreated, dealWon, dealLost];

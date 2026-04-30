@@ -1,10 +1,9 @@
 /**
- * Seed — minimal demo workspace + Phase 1 sample CRM data.
- * Adds: 5 contacts, 2 companies, a few tags. No deals/projects yet.
+ * Seed — demo workspace + sample CRM + a Sales pipeline with deals.
  *
  * Run with: pnpm db:seed
  */
-import { LifecycleStage, PrismaClient, Role, TagScope } from '@prisma/client';
+import { DealStatus, LifecycleStage, PrismaClient, Role, TagScope } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -177,8 +176,92 @@ async function main() {
     });
   }
 
+  // ── Pipeline + Stages + Deals ──────────────────────────────────────────
+  let pipeline = await prisma.pipeline.findFirst({
+    where: { workspaceId: workspace.id, isDefault: true },
+    include: { stages: { orderBy: { position: 'asc' } } },
+  });
+
+  if (!pipeline) {
+    pipeline = await prisma.pipeline.create({
+      data: {
+        workspaceId: workspace.id,
+        name: 'Sales',
+        isDefault: true,
+        stages: {
+          create: [
+            { name: 'Lead', position: 0, probability: 0.1, color: '#94a3b8' },
+            { name: 'Qualified', position: 1, probability: 0.25, color: '#7c3aed' },
+            { name: 'Demo', position: 2, probability: 0.5, color: '#2563eb' },
+            { name: 'Proposal', position: 3, probability: 0.7, color: '#0891b2' },
+            { name: 'Won', position: 4, probability: 1, color: '#10b981', isWon: true },
+            { name: 'Lost', position: 5, probability: 0, color: '#ef4444', isLost: true },
+          ],
+        },
+      },
+      include: { stages: { orderBy: { position: 'asc' } } },
+    });
+  }
+
+  const stageBy = (name: string) => pipeline!.stages.find((s) => s.name === name)!;
+  const sarah = await prisma.contact.findFirst({
+    where: { workspaceId: workspace.id, email: 'sarah@acme.com' },
+  });
+  const priya = await prisma.contact.findFirst({
+    where: { workspaceId: workspace.id, email: 'priya@orbitlabs.io' },
+  });
+
+  const seedDeals = [
+    {
+      title: 'Acme Q4 retainer',
+      value: 12000,
+      stageId: stageBy('Demo').id,
+      contactId: sarah?.id ?? null,
+      companyId: acme.id,
+      status: DealStatus.OPEN,
+    },
+    {
+      title: 'Orbit kickoff package',
+      value: 8500,
+      stageId: stageBy('Proposal').id,
+      contactId: priya?.id ?? null,
+      companyId: orbit.id,
+      status: DealStatus.OPEN,
+    },
+    {
+      title: 'Acme platform refresh',
+      value: 24000,
+      stageId: stageBy('Qualified').id,
+      contactId: sarah?.id ?? null,
+      companyId: acme.id,
+      status: DealStatus.OPEN,
+    },
+  ];
+
+  for (const d of seedDeals) {
+    const existing = await prisma.deal.findFirst({
+      where: { workspaceId: workspace.id, title: d.title, deletedAt: null },
+    });
+    if (existing) continue;
+    await prisma.deal.create({
+      data: {
+        workspaceId: workspace.id,
+        ownerId: owner.id,
+        pipelineId: pipeline.id,
+        stageId: d.stageId,
+        contactId: d.contactId,
+        companyId: d.companyId,
+        title: d.title,
+        value: d.value,
+        currency: 'USD',
+        status: d.status,
+      },
+    });
+  }
+
   console.log(`✓ workspace: ${workspace.slug} (owner: ${owner.email})`);
   console.log(`✓ ${seedContacts.length} contacts, 2 companies, 2 tags`);
+  console.log(`✓ pipeline: Sales (${pipeline.stages.length} stages), ${seedDeals.length} deals`);
 }
 
 main()

@@ -2,33 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  Briefcase,
-  Building2,
-  CalendarClock,
-  CheckSquare,
-  ChevronsUpDown,
-  FileSignature,
-  FileText,
-  Folder,
-  Home,
-  Inbox,
-  Plus,
-  Receipt,
-  Settings,
-  Sparkles,
-  Timer,
-  Users,
-} from 'lucide-react';
-import { cn } from '@/lib/utils/cn';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { Icon, type IconName } from '@/components/brand/Icon';
+import { Logo } from '@/components/brand/Logo';
+import { BrandAvatar } from '@/components/brand/Avatar';
 
 export interface SidebarWorkspace {
   id: string;
@@ -39,52 +15,54 @@ export interface SidebarWorkspace {
   brandAccent?: string;
 }
 
+interface NavItem {
+  label: string;
+  href: string;
+  icon: IconName;
+  badge?: string;
+  phase?: number;
+}
 interface NavSection {
   heading?: string;
-  items: { label: string; href: string; icon: React.ComponentType<{ className?: string }>; phase?: number }[];
+  items: NavItem[];
 }
 
 function navFor(slug: string): NavSection[] {
   return [
     {
-      items: [{ label: 'Home', href: `/${slug}`, icon: Home }],
-    },
-    {
-      heading: 'CRM',
+      heading: 'Workspace',
       items: [
-        { label: 'Contacts', href: `/${slug}/contacts`, icon: Users },
-        { label: 'Companies', href: `/${slug}/companies`, icon: Building2 },
-        { label: 'Deals', href: `/${slug}/deals`, icon: Briefcase, phase: 2 },
-      ],
-    },
-    {
-      heading: 'Delivery',
-      items: [
-        { label: 'Projects', href: `/${slug}/projects`, icon: Folder, phase: 3 },
-        { label: 'Tasks', href: `/${slug}/tasks`, icon: CheckSquare, phase: 3 },
-        { label: 'Time', href: `/${slug}/time`, icon: Timer, phase: 7 },
+        { label: 'Today', href: `/${slug}`, icon: 'home' },
+        { label: 'Inbox', href: `/${slug}/inbox`, icon: 'inbox', phase: 7 },
+        { label: 'Moe history', href: `/${slug}/moe`, icon: 'workflow', phase: 10 },
       ],
     },
     {
       heading: 'Sales',
       items: [
-        { label: 'Proposals', href: `/${slug}/proposals`, icon: FileText, phase: 4 },
-        { label: 'Contracts', href: `/${slug}/contracts`, icon: FileSignature, phase: 4 },
-        { label: 'Invoices', href: `/${slug}/invoices`, icon: Receipt, phase: 5 },
+        { label: 'Pipeline', href: `/${slug}/deals`, icon: 'pipeline' },
+        { label: 'Contacts', href: `/${slug}/contacts`, icon: 'users' },
+        { label: 'Companies', href: `/${slug}/companies`, icon: 'globe' },
+        { label: 'Proposals', href: `/${slug}/proposals`, icon: 'proposal', phase: 4 },
+        { label: 'Contracts', href: `/${slug}/contracts`, icon: 'contract', phase: 4 },
+        { label: 'Invoices', href: `/${slug}/invoices`, icon: 'invoice', phase: 5 },
       ],
     },
     {
-      heading: 'Engage',
+      heading: 'Delivery',
       items: [
-        { label: 'Forms', href: `/${slug}/forms`, icon: FileText, phase: 6 },
-        { label: 'Schedulers', href: `/${slug}/schedulers`, icon: CalendarClock, phase: 6 },
-        { label: 'Inbox', href: `/${slug}/inbox`, icon: Inbox, phase: 7 },
+        { label: 'Projects', href: `/${slug}/projects`, icon: 'project', phase: 3 },
+        { label: 'Tasks', href: `/${slug}/tasks`, icon: 'check', phase: 3 },
+        { label: 'Time', href: `/${slug}/time`, icon: 'time', phase: 7 },
       ],
     },
     {
+      heading: 'Connect',
       items: [
-        { label: 'Moe', href: `/${slug}/moe`, icon: Sparkles, phase: 10 },
-        { label: 'Settings', href: `/${slug}/settings`, icon: Settings },
+        { label: 'Scheduling', href: `/${slug}/schedulers`, icon: 'calendar', phase: 6 },
+        { label: 'Forms', href: `/${slug}/forms`, icon: 'form', phase: 6 },
+        { label: 'Client portal', href: `/${slug}/portal`, icon: 'portal', phase: 8 },
+        { label: 'Automations', href: `/${slug}/workflows`, icon: 'workflow', phase: 9 },
       ],
     },
   ];
@@ -93,84 +71,80 @@ function navFor(slug: string): NavSection[] {
 export function Sidebar({
   workspace,
   workspaces,
+  user,
 }: {
   workspace: SidebarWorkspace;
   workspaces: SidebarWorkspace[];
+  user: { firstName: string | null; lastName: string | null; email: string };
 }) {
   const pathname = usePathname();
   const sections = navFor(workspace.slug);
+  const myName =
+    [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || user.email;
 
   return (
-    <aside className="hidden w-60 shrink-0 flex-col border-r bg-background md:flex">
-      <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-3 text-left text-sm font-medium hover:bg-accent">
-          <span
-            aria-hidden
-            className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-xs font-semibold text-white"
-            style={{ background: workspace.brandPrimary ?? '#7c3aed' }}
-          >
-            {workspace.name.slice(0, 1)}
-          </span>
-          <span className="flex-1 truncate">{workspace.name}</span>
-          <ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-56">
-          <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
-          {workspaces.map((w) => (
-            <DropdownMenuItem key={w.id} asChild>
-              <Link href={`/${w.slug}`}>{w.name}</Link>
-            </DropdownMenuItem>
-          ))}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link href="/onboarding" className="flex items-center gap-2">
-              <Plus className="h-4 w-4" /> New workspace
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+    <aside className="sidebar">
+      <div className="sidebar-header">
+        <Logo size={22} />
+      </div>
 
-      <nav className="flex-1 space-y-4 overflow-y-auto px-2 py-3">
+      <div className="sidebar-search">
+        <button type="button" className="search-bar" aria-label="Open command palette">
+          <Icon name="search" size={14} />
+          <span style={{ color: 'var(--text-2)', fontSize: 13 }}>Search or ask Moe…</span>
+          <span className="kbd">⌘K</span>
+        </button>
+      </div>
+
+      <nav className="sidebar-nav">
         {sections.map((section, i) => (
           <div key={i}>
-            {section.heading && (
-              <p className="mb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                {section.heading}
-              </p>
-            )}
-            <ul className="space-y-0.5">
-              {section.items.map((item) => {
-                const Icon = item.icon;
-                const active = pathname === item.href || pathname?.startsWith(`${item.href}/`);
-                const locked = typeof item.phase === 'number';
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={locked ? '#' : item.href}
-                      aria-disabled={locked}
-                      onClick={(e) => locked && e.preventDefault()}
-                      className={cn(
-                        'flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors',
-                        active && 'bg-accent text-accent-foreground',
-                        !active && !locked && 'text-foreground hover:bg-accent/60',
-                        locked && 'cursor-not-allowed text-muted-foreground/70',
-                      )}
-                    >
-                      <Icon className="h-4 w-4" />
-                      <span className="flex-1 truncate">{item.label}</span>
-                      {locked && (
-                        <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium">
-                          P{item.phase}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+            {section.heading && <div className="nav-section-title">{section.heading}</div>}
+            {section.items.map((item) => {
+              const active = pathname === item.href || pathname?.startsWith(`${item.href}/`);
+              const locked = typeof item.phase === 'number';
+              const className = `nav-item ${active ? 'active' : ''}`;
+              const content = (
+                <>
+                  <Icon name={item.icon} size={16} />
+                  <span>{item.label}</span>
+                  {locked && <span className="badge mono">P{item.phase}</span>}
+                  {!locked && item.badge && <span className="badge">{item.badge}</span>}
+                </>
+              );
+              return locked ? (
+                <span
+                  key={item.href}
+                  className={`${className} disabled`}
+                  style={{ opacity: 0.55, cursor: 'not-allowed' }}
+                  aria-disabled
+                >
+                  {content}
+                </span>
+              ) : (
+                <Link key={item.href} href={item.href} className={className}>
+                  {content}
+                </Link>
+              );
+            })}
           </div>
         ))}
       </nav>
+
+      <div className="sidebar-footer">
+        <BrandAvatar name={myName} size={32} />
+        <div className="me-info">
+          <div className="me-name">{myName}</div>
+          <div className="me-plan mono">{workspace.name}</div>
+        </div>
+        <Link href={`/${workspace.slug}/settings`} aria-label="Settings" className="icon-btn">
+          <Icon name="settings" size={16} />
+        </Link>
+      </div>
+
+      {workspaces.length > 1 && (
+        <span className="sr-only">Switch workspace via the workspace switcher.</span>
+      )}
     </aside>
   );
 }
