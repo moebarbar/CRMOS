@@ -39,6 +39,22 @@ pnpm db:seed
 pnpm web
 ```
 
+### Baselining an existing database
+
+If your dev or production DB was provisioned with `prisma db push` before
+migrations existed, mark the initial migration as already applied so Prisma
+doesn't try to re-run it:
+
+```bash
+cd packages/db
+pnpm exec prisma migrate resolve --applied 0_init
+pnpm exec prisma migrate deploy   # applies any newer migrations (e.g. 1_pg_trgm_indexes)
+```
+
+After that, the canonical workflow is `pnpm db:migrate` for every schema
+change. **Do not use `pnpm db:push` against a database with migration
+history** — it will diverge.
+
 ## Daily commands
 
 ```bash
@@ -58,9 +74,9 @@ We ship in 12 numbered phases. **Don't build outside the current phase.** See [`
 
 | Phase | Scope | Status |
 |------:|------|:------:|
-| 0  | Foundation: monorepo, auth, multi-tenancy, app shell | 🟡 in progress |
-| 1  | CRM Core: contacts, companies, tags, custom fields | ⬜ |
-| 2  | Pipeline & Deals | ⬜ |
+| 0  | Foundation: monorepo, auth, multi-tenancy, app shell | ✅ shipped |
+| 1  | CRM Core: contacts, companies, tags, custom fields | ✅ shipped |
+| 2  | Pipeline & Deals | ✅ shipped |
 | 3  | Projects & Tasks | ⬜ |
 | 4  | Proposals & Contracts | ⬜ |
 | 5  | Invoices & Payments | ⬜ |

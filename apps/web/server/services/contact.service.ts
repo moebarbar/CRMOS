@@ -41,6 +41,7 @@ export const contactService = {
       ...(input.ownerId && { ownerId: input.ownerId }),
       ...(input.companyId && { companyId: input.companyId }),
       ...(input.tagId && { tags: { some: { tagId: input.tagId } } }),
+      // why: ILIKE backed by gin_trgm_ops indexes from migration 1_pg_trgm_indexes
       ...(input.search && {
         OR: [
           { firstName: { contains: input.search, mode: 'insensitive' } },

@@ -20,6 +20,7 @@ export const companyService = {
     const where: Prisma.CompanyWhereInput = {
       workspaceId: ctx.workspace.id,
       deletedAt: null,
+      // why: ILIKE backed by gin_trgm_ops indexes from migration 1_pg_trgm_indexes
       ...(input.search && {
         OR: [
           { name: { contains: input.search, mode: 'insensitive' } },
