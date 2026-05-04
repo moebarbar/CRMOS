@@ -6,14 +6,12 @@
 [build]
 builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
+# Watch the whole repo for changes — without this Railway may filter
+# changes to root-level files (lockfile, package.json) and skip deploys.
+watchPatterns = ["**"]
 
 [deploy]
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
 healthcheckPath = "/"
 healthcheckTimeout = 60
-
-# Watch the whole repo for changes — without this Railway may filter
-# changes to root-level files (lockfile, package.json) and skip deploys.
-[build.watchPatterns]
-include = ["**"]
