@@ -30,10 +30,9 @@ export function TeamMembersList({ memberships }: { memberships: MembershipWithUs
   });
 
   return (
-    <ul className="divide-y rounded-lg border bg-card">
+    <ul className="bg-card divide-y rounded-lg border">
       {memberships.map((m) => {
-        const name =
-          [m.user.firstName, m.user.lastName].filter(Boolean).join(' ') || m.user.email;
+        const name = [m.user.firstName, m.user.lastName].filter(Boolean).join(' ') || m.user.email;
         const initials = name
           .split(/\s+/)
           .map((p) => p[0])
@@ -48,7 +47,7 @@ export function TeamMembersList({ memberships }: { memberships: MembershipWithUs
             </Avatar>
             <div className="flex-1">
               <p className="text-sm font-medium">{name}</p>
-              <p className="text-xs text-muted-foreground">{m.user.email}</p>
+              <p className="text-muted-foreground text-xs">{m.user.email}</p>
             </div>
             <Badge variant="secondary">{m.role}</Badge>
             {!m.acceptedAt && <Badge variant="outline">Pending</Badge>}

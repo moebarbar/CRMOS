@@ -72,20 +72,20 @@ pnpm inngest:dev      # local Inngest dev server
 
 We ship in 12 numbered phases. **Don't build outside the current phase.** See [`PHASES.md`](./PHASES.md).
 
-| Phase | Scope | Status |
-|------:|------|:------:|
-| 0  | Foundation: monorepo, auth, multi-tenancy, app shell | ✅ shipped |
-| 1  | CRM Core: contacts, companies, tags, custom fields | ✅ shipped |
-| 2  | Pipeline & Deals | ✅ shipped |
-| 3  | Projects & Tasks | ⬜ |
-| 4  | Proposals & Contracts | ⬜ |
-| 5  | Invoices & Payments | ⬜ |
-| 6  | Forms & Schedulers | ⬜ |
-| 7  | Time, Files, Inbox, Wiki, Calendar | ⬜ |
-| 8  | Client Portal & White-Label | ⬜ |
-| 9  | Workflows Engine | ⬜ |
-| 10 | Moe (voice-to-action AI) | ⬜ |
-| 11 | Mobile, Integrations, Marketplace | ⬜ |
+| Phase | Scope                                                |   Status   |
+| ----: | ---------------------------------------------------- | :--------: |
+|     0 | Foundation: monorepo, auth, multi-tenancy, app shell | ✅ shipped |
+|     1 | CRM Core: contacts, companies, tags, custom fields   | ✅ shipped |
+|     2 | Pipeline & Deals                                     | ✅ shipped |
+|     3 | Projects & Tasks                                     |     ⬜     |
+|     4 | Proposals & Contracts                                |     ⬜     |
+|     5 | Invoices & Payments                                  |     ⬜     |
+|     6 | Forms & Schedulers                                   |     ⬜     |
+|     7 | Time, Files, Inbox, Wiki, Calendar                   |     ⬜     |
+|     8 | Client Portal & White-Label                          |     ⬜     |
+|     9 | Workflows Engine                                     |     ⬜     |
+|    10 | Moe (voice-to-action AI)                             |     ⬜     |
+|    11 | Mobile, Integrations, Marketplace                    |     ⬜     |
 
 ## Contributing
 

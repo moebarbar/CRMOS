@@ -66,7 +66,10 @@ export const createContactSchema = z
   })
   .refine(
     (data) =>
-      Boolean(data.firstName) || Boolean(data.lastName) || Boolean(data.email) || Boolean(data.phone),
+      Boolean(data.firstName) ||
+      Boolean(data.lastName) ||
+      Boolean(data.email) ||
+      Boolean(data.phone),
     { message: 'A contact needs at least a name, email, or phone.' },
   );
 export type CreateContactInput = z.infer<typeof createContactSchema>;

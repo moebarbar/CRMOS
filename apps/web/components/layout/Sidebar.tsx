@@ -79,8 +79,7 @@ export function Sidebar({
 }) {
   const pathname = usePathname();
   const sections = navFor(workspace.slug);
-  const myName =
-    [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || user.email;
+  const myName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || user.email;
 
   return (
     <aside className="sidebar">

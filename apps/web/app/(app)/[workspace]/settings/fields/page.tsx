@@ -12,12 +12,12 @@ export default function CustomFieldsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Custom fields</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Track data unique to your business on any record type.
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-1 rounded-lg border bg-card p-1">
+      <div className="bg-card flex flex-wrap gap-1 rounded-lg border p-1">
         {customFieldSchemas.CUSTOM_FIELD_ENTITIES.map((e) => (
           <button
             key={e}

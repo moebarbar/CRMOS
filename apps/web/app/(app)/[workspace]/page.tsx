@@ -7,7 +7,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Welcome to your workspace</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           The empty room. CRM, deals, projects, and Moe arrive in later phases.
         </p>
       </div>
@@ -18,7 +18,7 @@ export default function DashboardPage() {
             <CardTitle>Phase 0 · Foundation</CardTitle>
             <CardDescription>Shipped</CardDescription>
           </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
+          <CardContent className="text-muted-foreground text-sm">
             Auth, multi-tenancy, app shell, schema baseline.
           </CardContent>
         </Card>
@@ -27,7 +27,7 @@ export default function DashboardPage() {
             <CardTitle>Phase 1 · CRM Core</CardTitle>
             <CardDescription>Next up</CardDescription>
           </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
+          <CardContent className="text-muted-foreground text-sm">
             Contacts, companies, tags, custom fields, saved views, CSV import.
           </CardContent>
         </Card>
@@ -36,7 +36,7 @@ export default function DashboardPage() {
             <CardTitle>Phase 10 · Moe</CardTitle>
             <CardDescription>The launch demo</CardDescription>
           </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
+          <CardContent className="text-muted-foreground text-sm">
             Voice-to-action AI that runs every module via tool calls.
           </CardContent>
         </Card>

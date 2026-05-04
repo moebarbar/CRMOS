@@ -45,7 +45,7 @@ export function PipelinesManager({ workspaceSlug }: { workspaceSlug: string }) {
           e.preventDefault();
           if (name.trim()) create.mutate({ name: name.trim(), isDefault: false });
         }}
-        className="flex items-end gap-3 rounded-lg border bg-card p-4"
+        className="bg-card flex items-end gap-3 rounded-lg border p-4"
       >
         <div className="flex-1 space-y-1.5">
           <Label htmlFor="pipeline-name">New pipeline name</Label>
@@ -74,7 +74,7 @@ export function PipelinesManager({ workspaceSlug }: { workspaceSlug: string }) {
                     {p.name}
                     {p.isDefault && <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-500" />}
                   </CardTitle>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {p.stages.length} stages · {p._count.deals} deals
                   </p>
                 </div>
@@ -96,7 +96,7 @@ export function PipelinesManager({ workspaceSlug }: { workspaceSlug: string }) {
                   {p.stages.map((s) => (
                     <li
                       key={s.id}
-                      className="flex items-center gap-1.5 rounded-md border bg-background px-2 py-1 text-xs"
+                      className="bg-background flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs"
                     >
                       <span
                         aria-hidden

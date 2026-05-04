@@ -1,9 +1,6 @@
 import 'server-only';
 import { TRPCError } from '@trpc/server';
-import type {
-  CreateSavedViewInput,
-  UpdateSavedViewInput,
-} from '@chiefos/shared/zod/savedView';
+import type { CreateSavedViewInput, UpdateSavedViewInput } from '@chiefos/shared/zod/savedView';
 import type { Context } from '@/server/trpc/context';
 
 type Ctx = Context & {

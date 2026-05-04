@@ -35,18 +35,18 @@ export function InviteMemberForm() {
   return (
     <form
       onSubmit={handleSubmit((values) => invite.mutate(values))}
-      className="flex flex-wrap items-end gap-3 rounded-lg border bg-card p-4"
+      className="bg-card flex flex-wrap items-end gap-3 rounded-lg border p-4"
     >
       <div className="flex-1 space-y-1.5">
         <Label htmlFor="email">Email</Label>
         <Input id="email" type="email" placeholder="teammate@company.com" {...register('email')} />
-        {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+        {errors.email && <p className="text-destructive text-xs">{errors.email.message}</p>}
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="role">Role</Label>
         <select
           id="role"
-          className="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-ring"
+          className="border-input focus-visible:ring-ring h-9 rounded-md border bg-transparent px-3 text-sm shadow-sm focus-visible:ring-1"
           {...register('role')}
         >
           <option value="MEMBER">Member</option>

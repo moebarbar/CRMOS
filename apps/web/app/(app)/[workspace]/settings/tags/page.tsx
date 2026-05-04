@@ -7,7 +7,7 @@ export default function TagsSettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Tags</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Color-coded labels for contacts, companies, deals, and more.
         </p>
       </div>

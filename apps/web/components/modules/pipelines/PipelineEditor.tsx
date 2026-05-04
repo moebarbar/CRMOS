@@ -62,15 +62,13 @@ export function PipelineEditor({ pipelineId }: { pipelineId: string }) {
 
   return (
     <div className="space-y-4">
-      <ul className="divide-y rounded-lg border bg-card">
+      <ul className="bg-card divide-y rounded-lg border">
         {pipeline.data.stages.map((s) => (
           <li key={s.id} className="flex items-center gap-3 px-4 py-3">
             <input
               type="color"
               value={s.color}
-              onChange={(e) =>
-                updateStage.mutate({ id: s.id, color: e.target.value })
-              }
+              onChange={(e) => updateStage.mutate({ id: s.id, color: e.target.value })}
               className="h-6 w-6 rounded border"
               aria-label="Stage color"
             />
@@ -83,7 +81,7 @@ export function PipelineEditor({ pipelineId }: { pipelineId: string }) {
               className="flex-1"
             />
             <div className="flex items-center gap-1.5">
-              <Label className="text-xs text-muted-foreground" htmlFor={`prob-${s.id}`}>
+              <Label className="text-muted-foreground text-xs" htmlFor={`prob-${s.id}`}>
                 P
               </Label>
               <Input
@@ -102,8 +100,16 @@ export function PipelineEditor({ pipelineId }: { pipelineId: string }) {
                 }}
               />
             </div>
-            {s.isWon && <span className="rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-700">Won</span>}
-            {s.isLost && <span className="rounded-md bg-destructive/10 px-2 py-0.5 text-xs text-destructive">Lost</span>}
+            {s.isWon && (
+              <span className="rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-700">
+                Won
+              </span>
+            )}
+            {s.isLost && (
+              <span className="bg-destructive/10 text-destructive rounded-md px-2 py-0.5 text-xs">
+                Lost
+              </span>
+            )}
             <Button
               variant="ghost"
               size="icon"
@@ -135,7 +141,7 @@ export function PipelineEditor({ pipelineId }: { pipelineId: string }) {
             },
           });
         }}
-        className="flex items-end gap-3 rounded-lg border bg-card p-4"
+        className="bg-card flex items-end gap-3 rounded-lg border p-4"
       >
         <div className="flex-1 space-y-1.5">
           <Label htmlFor="new-stage-name">New stage name</Label>

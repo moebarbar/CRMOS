@@ -14,9 +14,9 @@ export function ForecastWidget({ pipelineId }: { pipelineId?: string }) {
   return (
     <div
       title={`${q.data.count} open deals · raw ${formatMoney(q.data.raw)}`}
-      className="flex h-9 items-center gap-2 rounded-md border bg-card px-3 text-sm shadow-sm"
+      className="bg-card flex h-9 items-center gap-2 rounded-md border px-3 text-sm shadow-sm"
     >
-      <TrendingUp className="h-3.5 w-3.5 text-muted-foreground" />
+      <TrendingUp className="text-muted-foreground h-3.5 w-3.5" />
       <span className="text-muted-foreground">Forecast</span>
       <span className="font-semibold tabular-nums">{formatMoney(q.data.weighted)}</span>
     </div>

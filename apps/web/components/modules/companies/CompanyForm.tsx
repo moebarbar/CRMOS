@@ -73,7 +73,7 @@ export function CompanyForm({ workspaceSlug, mode, initial }: Props) {
   return (
     <FormProvider {...form}>
       <form onSubmit={onSubmit} className="space-y-6">
-        <div className="grid gap-4 rounded-lg border bg-card p-6 md:grid-cols-2">
+        <div className="bg-card grid gap-4 rounded-lg border p-6 md:grid-cols-2">
           <Field label="Name" error={errors.name?.message}>
             <Input {...register('name')} autoFocus />
           </Field>
@@ -85,7 +85,7 @@ export function CompanyForm({ workspaceSlug, mode, initial }: Props) {
           </Field>
           <Field label="Size">
             <select
-              className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
+              className="border-input h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-sm"
               {...register('size')}
             >
               <option value="">—</option>
@@ -144,7 +144,7 @@ function Field({
     <div className="space-y-1.5">
       <Label>{label}</Label>
       {children}
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && <p className="text-destructive text-xs">{error}</p>}
     </div>
   );
 }

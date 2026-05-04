@@ -14,10 +14,7 @@ export interface AuditInput {
  * Append-only audit trail for compliance-relevant events
  * (financial, permission changes, deletions). Never edited.
  */
-export async function writeAudit(
-  ctx: Context & { workspace: { id: string } },
-  input: AuditInput,
-) {
+export async function writeAudit(ctx: Context & { workspace: { id: string } }, input: AuditInput) {
   const reqHeaders = await headers();
   const ip = reqHeaders.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null;
   const userAgent = reqHeaders.get('user-agent') ?? null;

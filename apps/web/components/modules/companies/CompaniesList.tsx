@@ -18,8 +18,8 @@ export function CompaniesList({ workspaceSlug }: { workspaceSlug: string }) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <div className="relative flex-1 min-w-[240px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <div className="relative min-w-[240px] flex-1">
+          <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -35,7 +35,7 @@ export function CompaniesList({ workspaceSlug }: { workspaceSlug: string }) {
       {query.isLoading ? (
         <Skeleton className="h-48 w-full" />
       ) : !query.data || query.data.items.length === 0 ? (
-        <div className="rounded-lg border bg-card p-12 text-center">
+        <div className="bg-card rounded-lg border p-12 text-center">
           <p className="text-sm font-medium">
             {search ? 'No companies match.' : 'No companies yet.'}
           </p>
@@ -49,23 +49,23 @@ export function CompaniesList({ workspaceSlug }: { workspaceSlug: string }) {
             <li key={c.id}>
               <Link
                 href={`/${workspaceSlug}/companies/${c.id}`}
-                className="flex items-center gap-3 rounded-lg border bg-card p-4 hover:bg-accent/40"
+                className="bg-card hover:bg-accent/40 flex items-center gap-3 rounded-lg border p-4"
               >
-                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-muted">
+                <div className="bg-muted grid h-10 w-10 shrink-0 place-items-center rounded-md">
                   {c.logoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={c.logoUrl} alt="" className="h-10 w-10 rounded-md object-cover" />
                   ) : (
-                    <Building2 className="h-5 w-5 text-muted-foreground" />
+                    <Building2 className="text-muted-foreground h-5 w-5" />
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{c.name}</p>
-                  <p className="truncate text-xs text-muted-foreground">
+                  <p className="text-muted-foreground truncate text-xs">
                     {[c.domain, c.industry].filter(Boolean).join(' · ')}
                   </p>
                 </div>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-muted-foreground text-xs">
                   {c._count.contacts} contact{c._count.contacts === 1 ? '' : 's'}
                 </span>
               </Link>

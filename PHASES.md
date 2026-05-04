@@ -15,14 +15,17 @@
 ---
 
 ## Phase 0 — Foundation
+
 **Goal:** Empty but correctly-architected app shell. Auth works. Multi-tenant resolved. Empty rooms ready for furniture.
 **Duration:** 1–2 weeks
 **Prereqs:** none
 
 ### Schema
+
 - `User`, `Workspace`, `Membership`, `WorkspaceDomain`, `ApiKey`, `Activity`, `AuditLog`, `Notification`
 
 ### Setup tasks
+
 - [ ] Initialize monorepo: `pnpm init`, Turborepo, `apps/web`, `packages/db`, `packages/shared`, `packages/emails`
 - [ ] Next.js 14 with App Router, TypeScript strict, ESLint, Prettier
 - [ ] Tailwind + shadcn/ui base install (`button`, `input`, `card`, `dialog`, `dropdown-menu`, `command`, `toast`, `skeleton`, `avatar`, `badge`)
@@ -89,6 +92,7 @@ apps/web/
 ```
 
 ### Acceptance criteria
+
 - [ ] User signs up → redirected to onboarding → creates workspace → lands on `/[slug]` dashboard
 - [ ] Owner can invite a teammate by email; invitee accepts and sees the same workspace
 - [ ] Switching workspaces via dropdown works
@@ -99,19 +103,23 @@ apps/web/
 - [ ] CI green on `main`
 
 ### Demo
+
 "I sign up, create my workspace, invite my co-founder. He joins. We can both see the dashboard. There's nothing in it yet — that's Phase 1."
 
 ---
 
 ## Phase 1 — CRM Core
+
 **Goal:** Real contact + company management with custom fields, tags, activity timeline, saved views.
 **Duration:** 2–3 weeks
 **Prereqs:** Phase 0
 
 ### Schema
+
 - `Contact`, `Company`, `Tag`, `ContactTag`, `Note`, `CustomFieldDef`
 
 ### Tasks
+
 - [ ] Contacts module: list, create, edit, delete (soft), bulk actions, CSV import/export
 - [ ] Companies module same surface
 - [ ] Tags: workspace-scoped, color-coded, attach to contacts
@@ -128,6 +136,7 @@ apps/web/
 - [ ] Auto-link contact's `companyId` when email domain matches a company
 
 ### Files
+
 ```
 app/(app)/[workspace]/contacts/
 ├── page.tsx                          # list view with views/filters/columns
@@ -172,6 +181,7 @@ server/trpc/routers/
 ```
 
 ### Acceptance criteria
+
 - [ ] Create 100 contacts via CSV import in < 30 seconds
 - [ ] Custom field of every type renders + saves correctly
 - [ ] Filter "Owner = me AND lifecycle = LEAD" returns correct rows
@@ -182,19 +192,23 @@ server/trpc/routers/
 - [ ] Permission test: a CONTRACTOR cannot see contacts not assigned to their projects
 
 ### Demo
+
 "I import 200 contacts from a CSV. I tag the agency clients. I filter by tag and save the view. I open Sarah's profile, add a note, see the activity timeline."
 
 ---
 
 ## Phase 2 — Pipeline & Deals
+
 **Goal:** Drag-drop sales pipeline, multiple pipelines, forecasts, won/lost handling.
 **Duration:** 1.5–2 weeks
 **Prereqs:** Phase 1
 
 ### Schema
+
 - `Pipeline`, `PipelineStage`, `Deal`
 
 ### Tasks
+
 - [ ] Pipelines: CRUD, multiple per workspace, set default
 - [ ] Stages: drag to reorder, color, win-probability, rot-in-days
 - [ ] Deals: CRUD, link to contact + company, value + currency, expected close, owner
@@ -208,6 +222,7 @@ server/trpc/routers/
 - [ ] Activities required per stage (gate: must have a logged note before advancing)
 
 ### Files
+
 ```
 app/(app)/[workspace]/deals/
 ├── page.tsx                          # default = active pipeline kanban
@@ -235,6 +250,7 @@ server/trpc/routers/
 ```
 
 ### Acceptance criteria
+
 - [ ] Drag a deal from "Demo" to "Proposal" — saves order + stage
 - [ ] Forecast widget recalculates on drag
 - [ ] Cannot move deal forward without a logged note (when stage gate enabled)
@@ -244,19 +260,23 @@ server/trpc/routers/
 - [ ] Mobile-responsive kanban (vertical stack on small screens)
 
 ### Demo
+
 "I drag a $12k deal from Demo to Proposal. The forecast jumps. I close it as Won. The system fires an event that, in Phase 4, will auto-create the contract."
 
 ---
 
 ## Phase 3 — Projects & Tasks
+
 **Goal:** Asana-grade project + task management connected to CRM.
 **Duration:** 3 weeks
 **Prereqs:** Phase 1
 
 ### Schema
+
 - `Project`, `ProjectTemplate`, `Milestone`, `Task`, `TaskDependency`
 
 ### Tasks
+
 - [ ] Projects: CRUD, link to client (contact/company) + deal, status, dates, budget
 - [ ] Project templates: clone-with-tasks, store as `ProjectTemplate.data`
 - [ ] Milestones: ordered groupings inside a project
@@ -272,6 +292,7 @@ server/trpc/routers/
 - [ ] Email-to-task: dedicated inbound address per project (Postmark inbound)
 
 ### Files
+
 ```
 app/(app)/[workspace]/projects/
 ├── page.tsx                          # all projects
@@ -313,6 +334,7 @@ lib/workflows/
 ```
 
 ### Acceptance criteria
+
 - [ ] Create project from template — tasks + milestones replicate
 - [ ] Drag task between board columns → status updates
 - [ ] Drag task in timeline → start/due dates update
@@ -323,19 +345,23 @@ lib/workflows/
 - [ ] Blocked-by dependency prevents marking blocker incomplete
 
 ### Demo
+
 "I clone the 'Web design retainer' template into a new project for Acme. 24 tasks generate. I drag tasks across the kanban, build a timeline, mention Diego. He gets a notification. I send him a task by email — it appears in the right project."
 
 ---
 
 ## Phase 4 — Proposals & Contracts
+
 **Goal:** PandaDoc/HoneyBook-grade proposals with click-to-sign + multi-party contracts with audit trail.
 **Duration:** 3 weeks
 **Prereqs:** Phase 2
 
 ### Schema
+
 - `Proposal`, `ProposalTemplate`, `ProposalView`, `Contract`, `ContractTemplate`, `ContractSigner`, `ContractField`
 
 ### Tasks
+
 - [ ] Proposal builder using Tiptap with custom blocks:
   - text, heading, image, table, divider, columns
   - `pricing-table` (line items with qty, rate, total, optional toggles)
@@ -362,6 +388,7 @@ lib/workflows/
 - [ ] Auto-generate contract from accepted proposal (`proposal.approved` → `createContractFromProposal`)
 
 ### Files
+
 ```
 app/(app)/[workspace]/proposals/
 ├── page.tsx
@@ -405,6 +432,7 @@ lib/workflows/
 ```
 
 ### Acceptance criteria
+
 - [ ] Build a 3-page proposal with pricing table, send to a test contact
 - [ ] Track view event from real browser (sees view in timeline)
 - [ ] Client clicks Accept → types name → draws signature → "Approved" page
@@ -416,19 +444,23 @@ lib/workflows/
 - [ ] Yousign mode: same flow but legal-grade artifact
 
 ### Demo
+
 "I draft a proposal for Acme with a 3-tier pricing table. They view it twice over 4 hours. They accept the middle tier and e-sign. A contract auto-drafts with the same line items. Both parties sign in sequence. Final PDF lands in the deal's files."
 
 ---
 
 ## Phase 5 — Invoices & Payments
+
 **Goal:** FreshBooks-grade billing fully connected to projects + contacts. Stripe Connect ready for marketplace mode.
 **Duration:** 3 weeks
 **Prereqs:** Phase 4
 
 ### Schema
+
 - `Invoice`, `InvoiceLineItem`, `RecurringInvoice`, `Payment`, `Refund`, `CreditNote`, `TaxRate`
 
 ### Tasks
+
 - [ ] Stripe Connect onboarding (Express accounts; falls back to platform account in dev)
 - [ ] Invoices: CRUD, draft, send via email + public link
 - [ ] Line items: description, qty, rate, tax rate, discount %, total
@@ -452,6 +484,7 @@ lib/workflows/
 - [ ] QuickBooks/Xero sync (one-way write at first; flag-gated)
 
 ### Files
+
 ```
 app/(app)/[workspace]/invoices/
 ├── page.tsx
@@ -487,6 +520,7 @@ lib/workflows/
 ```
 
 ### Acceptance criteria
+
 - [ ] Send invoice → receive in inbox → pay with test card → invoice marked PAID, payment row created, project's `amountPaid` increments
 - [ ] Recurring monthly invoice generates next instance on the 1st of next month
 - [ ] Overdue email fires on +7 days unpaid
@@ -497,19 +531,23 @@ lib/workflows/
 - [ ] Stripe Connect onboarding completes in <5 minutes for a new workspace
 
 ### Demo
+
 "I send a $4,500 invoice. The client pays with Apple Pay on their phone. My phone pings. The deal moves to Won. The project shows fully paid. I set up a $499/mo retainer that auto-bills next month."
 
 ---
 
 ## Phase 6 — Forms & Schedulers
+
 **Goal:** Typeform + Calendly fully built in. Payment-collecting forms. Round-robin booking.
 **Duration:** 2.5 weeks
 **Prereqs:** Phase 1, Phase 5
 
 ### Schema
+
 - `Form`, `FormSubmission`, `Scheduler`, `Booking`, `CalendarConnection`
 
 ### Tasks
+
 - [ ] Form builder (drag-drop, 18 field types, conditional logic, multi-step)
 - [ ] Public form pages at `/f/[slug]` with theming + custom CSS
 - [ ] Embed code generator (iframe + JS embed with auto-resize)
@@ -534,6 +572,7 @@ lib/workflows/
 - [ ] Combined form + scheduler flow: intake form → book on submit
 
 ### Files
+
 ```
 app/(app)/[workspace]/forms/
 ├── page.tsx
@@ -579,6 +618,7 @@ lib/integrations/
 ```
 
 ### Acceptance criteria
+
 - [ ] Build a 5-field form with conditional logic in <5 min
 - [ ] Embed it in a Webflow page; submit; see contact created with correct mapping
 - [ ] Form with $500 deposit: Stripe Checkout collects, mark paid, creates contact + deal
@@ -588,19 +628,23 @@ lib/integrations/
 - [ ] Time zone: US client books a 9am London slot from NYC — both calendars show right time
 
 ### Demo
+
 "I build a 'Book a strategy call' form on my site. A lead fills it, pays $200, and gets booked into Diego's Tuesday at 2pm. Diego's Google Calendar updates. The contact, deal, payment, and meeting are all linked."
 
 ---
 
 ## Phase 7 — Time, Files, Inbox, Wiki, Calendar
+
 **Goal:** The remaining table-stakes modules.
 **Duration:** 3 weeks
 **Prereqs:** Phase 3, Phase 5
 
 ### Schema
+
 - `TimeEntry`, `Timesheet`, `Folder`, `File`, `FileShare`, `FileRequest`, `Channel`, `ChannelMember`, `Message`, `MessageReaction`, `MessageAttachment`, `EmailThread`, `EmailMessage`, `WikiPage`
 
 ### Tasks
+
 - [ ] Time tracking: start/stop timer, manual entry, idle detection (browser visibilitychange)
 - [ ] Timesheets: weekly view, submit, approve, lock
 - [ ] Time-to-invoice: bulk action "create invoice from these entries"
@@ -673,6 +717,7 @@ server/services/
 ```
 
 ### Acceptance criteria
+
 - [ ] Start timer → 30 min later, stop → entry saved to right project + task
 - [ ] Submit timesheet → manager approves → locked
 - [ ] Bill 8 unbilled hours from this week into one invoice in 3 clicks
@@ -683,19 +728,23 @@ server/services/
 - [ ] Wiki page tree with 3 levels deep loads in <500ms
 
 ### Demo
+
 "I track 4 hours on Acme's project. I bill it in one click. I share their Q4 brand assets via a password-protected link. I message Diego about a question on the project. I email the client from inside the app — the reply lands on their CRM record automatically."
 
 ---
 
 ## Phase 8 — Client Portal & White-Label
+
 **Goal:** Branded client portal where customers see their projects, invoices, files, contracts, messages — all on your custom domain.
 **Duration:** 2 weeks
 **Prereqs:** Phases 3–7
 
 ### Schema additions
+
 - (No new tables; uses `Membership.role = CLIENT`, `WorkspaceDomain`, `Contact`)
 
 ### Tasks
+
 - [ ] Client invitation flow: send a contact a magic-link invite to portal
 - [ ] Dedicated portal layout with separate routes under `/(portal)/`
 - [ ] Per-client visibility scoping (a client only sees their projects, contracts, invoices, files, messages)
@@ -710,6 +759,7 @@ server/services/
 - [ ] Multi-language portal (i18n with next-intl, 12 languages at launch)
 
 ### Files
+
 ```
 app/(portal)/
 ├── layout.tsx                        # portal-specific shell
@@ -742,6 +792,7 @@ lib/branding/
 ```
 
 ### Acceptance criteria
+
 - [ ] Client opens magic-link → lands on their branded portal with workspace logo + colors
 - [ ] Client can pay an invoice from portal
 - [ ] Client signs a contract from portal
@@ -751,19 +802,23 @@ lib/branding/
 - [ ] Switching workspace locale changes portal language
 
 ### Demo
+
 "I send Acme an invite. They land on `clients.youragency.com` with my logo and colors — no ChiefOS branding anywhere. They see their two active projects, pay an outstanding invoice, sign the renewal contract, and message me."
 
 ---
 
 ## Phase 9 — Workflows Engine
+
 **Goal:** Visual no-code workflow builder. Replaces Zapier for in-platform automations.
 **Duration:** 3 weeks
 **Prereqs:** all previous
 
 ### Schema
+
 - `Workflow`, `WorkflowRun`
 
 ### Tasks
+
 - [ ] Workflow definition schema (versioned, validated by zod)
 - [ ] Visual builder using React Flow:
   - Trigger nodes
@@ -779,6 +834,7 @@ lib/branding/
 - [ ] Templates library (seed with 30 common automations)
 
 ### Files
+
 ```
 app/(app)/[workspace]/workflows/
 ├── page.tsx
@@ -809,6 +865,7 @@ lib/workflows/
 ```
 
 ### Acceptance criteria
+
 - [ ] Build "When invoice paid → wait 3 days → send thank-you email + create upsell task" — runs end-to-end
 - [ ] Branch: "If deal value > $5k → notify Sarah; else → notify Mike"
 - [ ] For-each: "When project completed → for each line item → create satisfaction survey"
@@ -817,19 +874,23 @@ lib/workflows/
 - [ ] Cron trigger fires nightly at 9am workspace time
 
 ### Demo
+
 "I build a workflow visually: when a new lead form submits, tag them, send a welcome email, wait 2 days, send a follow-up, and notify the owner. I see real runs flow through with inputs and outputs at each step."
 
 ---
 
 ## Phase 10 — Moe (Super Work AI)
+
 **Goal:** The differentiator. Voice-to-text everywhere. Voice-to-action via "Hey Moe." Agentic execution across every module.
 **Duration:** 4 weeks
 **Prereqs:** all previous
 
 ### Schema
+
 - `AiConversation`, `AiMessage`, `AiToolCall`, `AiMemory`, `SearchDocument`
 
 ### Tasks
+
 - [ ] Tool registry: every module exposes typed tools
   - Contacts: search, create, update, tag, untag, delete
   - Deals: search, create, update, move-stage, mark-won, mark-lost
@@ -875,6 +936,7 @@ lib/workflows/
 - [ ] Audit log entry for every Moe write action
 
 ### Files
+
 ```
 app/(app)/[workspace]/moe/
 ├── page.tsx                          # full chat
@@ -927,6 +989,7 @@ server/services/
 ```
 
 ### Acceptance criteria
+
 - [ ] "Hey Moe, send Sarah the website proposal" — drafts, confirms, sends
 - [ ] "Moe, invoice Acme $4,500 for last week's work" — bills unbilled time entries on the project, sends invoice
 - [ ] "Show me overdue invoices and draft chase emails" — lists, drafts each in user's tone, awaits batch approve
@@ -938,7 +1001,8 @@ server/services/
 - [ ] Token budget enforced; nice fallback when exhausted
 
 ### Demo (THE LAUNCH DEMO)
-*Single uncut take, voice-only:*
+
+_Single uncut take, voice-only:_
 "Hey Moe, Acme just signed the proposal — kick off the project."
 → Moe: "I'll create the project from the website-redesign template, send the contract to John, draft the kickoff invoice for the 50% deposit, and book a kickoff call. Want me to suggest a time?"
 → "Yeah, find Sarah a 30-min slot Thursday afternoon."
@@ -947,11 +1011,13 @@ server/services/
 ---
 
 ## Phase 11 — Mobile, Integrations, Marketplace, Polish
+
 **Goal:** Ecosystem and reach.
 **Duration:** ongoing — V2 launch milestone
 **Prereqs:** Phases 0–10
 
 ### Tasks
+
 - [ ] Expo / React Native app sharing tRPC client
 - [ ] Native push notifications
 - [ ] Voice-first mobile UX: large mic button, "Hey Moe" listener, transcript display
@@ -967,6 +1033,7 @@ server/services/
 - [ ] Status page (BetterUptime or self-hosted)
 
 ### Acceptance criteria
+
 - [ ] Mobile app on App Store + Play Store with the 8 most-used flows
 - [ ] Public docs at `docs.chiefos.app` with API reference
 - [ ] At least 50 templates live in marketplace
@@ -980,7 +1047,7 @@ For each phase:
 
 1. Read `CLAUDE.md` and the relevant phase here.
 2. Open a new Claude Code session in your repo with this file plus `SCHEMA.md` in context.
-3. Say: *"We're starting Phase X. Read PHASES.md section for Phase X, confirm the schema in SCHEMA.md is current, then build it task-by-task. Run migrations, write tests, commit each task as a separate atomic commit. Stop after each acceptance criterion is verified."*
+3. Say: _"We're starting Phase X. Read PHASES.md section for Phase X, confirm the schema in SCHEMA.md is current, then build it task-by-task. Run migrations, write tests, commit each task as a separate atomic commit. Stop after each acceptance criterion is verified."_
 4. Review every commit. Don't sleep on the audit log.
 5. After all acceptance criteria green: cut a release, deploy, demo, then move to the next phase.
 
@@ -988,7 +1055,7 @@ For each phase:
 
 ## What changes when
 
-- **Schema changes** require this file *and* `SCHEMA.md` *and* `prisma/schema.prisma` to all update in the same PR.
+- **Schema changes** require this file _and_ `SCHEMA.md` _and_ `prisma/schema.prisma` to all update in the same PR.
 - **Phase scope changes** require updating this file before any commits in the new direction. Don't drift quietly.
 - **Adding a new module** = add it as Phase 12+ rather than wedging into an existing phase mid-build.
 

@@ -9,9 +9,10 @@ interface LogPayload {
   ts: string;
 }
 
-const AXIOM_URL = process.env.AXIOM_TOKEN && process.env.AXIOM_DATASET
-  ? `https://api.axiom.co/v1/datasets/${process.env.AXIOM_DATASET}/ingest`
-  : null;
+const AXIOM_URL =
+  process.env.AXIOM_TOKEN && process.env.AXIOM_DATASET
+    ? `https://api.axiom.co/v1/datasets/${process.env.AXIOM_DATASET}/ingest`
+    : null;
 
 async function ship(payload: LogPayload) {
   if (!AXIOM_URL) return;

@@ -42,7 +42,7 @@ export const activityRouter = createTRPCRouter({
 
       return rows.map((r) => ({
         ...r,
-        actor: r.actorId ? usersById.get(r.actorId) ?? null : null,
+        actor: r.actorId ? (usersById.get(r.actorId) ?? null) : null,
       }));
     }),
 });

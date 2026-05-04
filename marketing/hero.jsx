@@ -4,7 +4,18 @@ const { useState, useEffect, useRef } = React;
 // ---------- Hero ----------
 const HERO_VARIANTS = ['split', 'terminal', 'editorial'];
 
-const TICKER_LOGOS = ['HORIZON', 'NORTHWIND', 'CIPHER', 'OAKLINE', 'STELLA', 'KNUDSEN', 'PARALLEL', 'FERN & CO', 'HALSTEAD', 'BYWATER'];
+const TICKER_LOGOS = [
+  'HORIZON',
+  'NORTHWIND',
+  'CIPHER',
+  'OAKLINE',
+  'STELLA',
+  'KNUDSEN',
+  'PARALLEL',
+  'FERN & CO',
+  'HALSTEAD',
+  'BYWATER',
+];
 
 const MoeDemo = () => {
   const scripts = [
@@ -58,7 +69,9 @@ const MoeDemo = () => {
   const cur = scripts[scriptIdx];
 
   useEffect(() => {
-    setTyped(''); setPhase('typing'); setThinkIdx(0);
+    setTyped('');
+    setPhase('typing');
+    setThinkIdx(0);
     let i = 0;
     const t = setInterval(() => {
       i++;
@@ -95,14 +108,21 @@ const MoeDemo = () => {
     <div className="moe-demo">
       <div className="moe-demo-chrome">
         <div className="moe-demo-dots">
-          <span /><span /><span />
+          <span />
+          <span />
+          <span />
         </div>
         <div className="moe-demo-title mono">moe · command bar</div>
         <span className="kbd">⌘K</span>
       </div>
       <div className="moe-demo-body">
         <div className="moe-demo-input">
-          <MoeIcon size={28} state={phase === 'thinking' ? 'thinking' : phase === 'typing' ? 'listening' : 'speaking'} />
+          <MoeIcon
+            size={28}
+            state={
+              phase === 'thinking' ? 'thinking' : phase === 'typing' ? 'listening' : 'speaking'
+            }
+          />
           <div className="moe-demo-prompt mono">
             {typed}
             {phase === 'typing' && <span className="caret" />}
@@ -139,7 +159,9 @@ const MoeDemo = () => {
               ))}
             </div>
             <div className="moe-demo-card-footer">
-              <button className="btn primary sm">{cur.result.cta} <Icon name="arrow" size={14} /></button>
+              <button className="btn primary sm">
+                {cur.result.cta} <Icon name="arrow" size={14} />
+              </button>
               <button className="btn ghost sm">Edit</button>
             </div>
           </div>
@@ -169,21 +191,33 @@ const HeroSplit = () => (
           <span>NEW · Moe v2 · voice-to-action</span>
         </div>
         <h1 className="hero-title" style={{ marginTop: 24 }}>
-          Run your whole<br />business. <span className="highlight">Or tell Moe.</span>
+          Run your whole
+          <br />
+          business. <span className="highlight">Or tell Moe.</span>
         </h1>
         <p className="hero-sub">
-          CRMOS is one app where leads, proposals, contracts, invoices, projects,
-          scheduling, time, and client comms live together — and an AI agent named
-          Moe takes voice or text commands and just does the work.
+          CRMOS is one app where leads, proposals, contracts, invoices, projects, scheduling, time,
+          and client comms live together — and an AI agent named Moe takes voice or text commands
+          and just does the work.
         </p>
         <div className="hero-cta">
-          <a href="#/signup" className="btn primary lg">Start free <Icon name="arrow" size={16} /></a>
-          <a href="#/product" className="btn lg ghost">Watch the demo <Icon name="play" size={14} /></a>
+          <a href="#/signup" className="btn primary lg">
+            Start free <Icon name="arrow" size={16} />
+          </a>
+          <a href="#/product" className="btn lg ghost">
+            Watch the demo <Icon name="play" size={14} />
+          </a>
         </div>
         <div className="hero-meta mono">
-          <span><Icon name="check" size={13} /> 14-day trial</span>
-          <span><Icon name="check" size={13} /> No card</span>
-          <span><Icon name="check" size={13} /> Replaces 8–12 tools</span>
+          <span>
+            <Icon name="check" size={13} /> 14-day trial
+          </span>
+          <span>
+            <Icon name="check" size={13} /> No card
+          </span>
+          <span>
+            <Icon name="check" size={13} /> Replaces 8–12 tools
+          </span>
         </div>
       </div>
       <div className="hero-right">
@@ -192,7 +226,9 @@ const HeroSplit = () => (
     </div>
     <div className="hero-stats">
       <div className="hero-stat">
-        <div className="hero-stat-num"><span className="lime-text">2,400+</span></div>
+        <div className="hero-stat-num">
+          <span className="lime-text">2,400+</span>
+        </div>
         <div className="hero-stat-label">teams shipped</div>
       </div>
       <div className="hero-stat">
@@ -226,16 +262,23 @@ const HeroTerminal = () => {
     { t: '$ _', d: 4500 },
   ];
   useEffect(() => {
-    const timers = script.map(s => setTimeout(() => setLines(prev => [...prev, s]), s.d));
+    const timers = script.map((s) => setTimeout(() => setLines((prev) => [...prev, s]), s.d));
     const reset = setTimeout(() => setLines([]), 8000);
-    return () => { timers.forEach(clearTimeout); clearTimeout(reset); };
+    return () => {
+      timers.forEach(clearTimeout);
+      clearTimeout(reset);
+    };
   }, [lines.length === 0]);
 
   return (
     <div className="hero hero-terminal">
       <div className="terminal-window">
         <div className="terminal-bar">
-          <span className="terminal-dots"><span/><span/><span/></span>
+          <span className="terminal-dots">
+            <span />
+            <span />
+            <span />
+          </span>
           <span className="mono">moe@crmos:~</span>
         </div>
         <div className="terminal-body mono">
@@ -248,16 +291,21 @@ const HeroTerminal = () => {
       </div>
       <div className="hero-terminal-overlay">
         <h1 className="hero-title">
-          Your business<br />in <span className="highlight">one command.</span>
+          Your business
+          <br />
+          in <span className="highlight">one command.</span>
         </h1>
         <p className="hero-sub" style={{ maxWidth: 540 }}>
-          CRMOS is the first AI-native business OS. Replace HubSpot, Asana,
-          FreshBooks, DocuSign, Calendly, and Toggl with one connected system —
-          and just talk to Moe.
+          CRMOS is the first AI-native business OS. Replace HubSpot, Asana, FreshBooks, DocuSign,
+          Calendly, and Toggl with one connected system — and just talk to Moe.
         </p>
         <div className="hero-cta">
-          <a href="#/signup" className="btn primary lg">Start free</a>
-          <a href="#/product" className="btn lg ghost">See how Moe works</a>
+          <a href="#/signup" className="btn primary lg">
+            Start free
+          </a>
+          <a href="#/product" className="btn lg ghost">
+            See how Moe works
+          </a>
         </div>
       </div>
     </div>
@@ -268,13 +316,15 @@ const HeroEditorial = () => (
   <div className="hero hero-editorial">
     <div className="editorial-tag mono">CRMOS · 04.2026 · ISSUE 04</div>
     <h1 className="editorial-title">
-      One app.<br />
-      <span className="highlight">One agent.</span><br />
+      One app.
+      <br />
+      <span className="highlight">One agent.</span>
+      <br />
       <span className="dim-text">Zero tab-switching.</span>
     </h1>
     <p className="editorial-lede">
-      The business OS for solo founders, freelancers, micro-agencies, and
-      service SMBs who are tired of stitching twelve tools together.
+      The business OS for solo founders, freelancers, micro-agencies, and service SMBs who are tired
+      of stitching twelve tools together.
     </p>
     <div className="editorial-grid">
       <div className="editorial-cell">
@@ -299,8 +349,12 @@ const HeroEditorial = () => (
       </div>
     </div>
     <div className="hero-cta" style={{ marginTop: 36 }}>
-      <a href="#/signup" className="btn primary lg">Start free</a>
-      <a href="#/product" className="btn lg ghost">Read the manual</a>
+      <a href="#/signup" className="btn primary lg">
+        Start free
+      </a>
+      <a href="#/product" className="btn lg ghost">
+        Read the manual
+      </a>
     </div>
   </div>
 );

@@ -29,20 +29,20 @@ export default async function ContactDetailPage({
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <section className="space-y-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            <h2 className="text-muted-foreground text-sm font-semibold uppercase tracking-wider">
               Deals
             </h2>
             <ContactDeals workspaceSlug={params.workspace} contactId={contact.id} />
           </section>
           <section className="space-y-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            <h2 className="text-muted-foreground text-sm font-semibold uppercase tracking-wider">
               Notes
             </h2>
             <ContactNotes contactId={contact.id} />
           </section>
         </div>
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h2 className="text-muted-foreground text-sm font-semibold uppercase tracking-wider">
             Activity
           </h2>
           <ActivityTimeline targetType="CONTACT" targetId={contact.id} />

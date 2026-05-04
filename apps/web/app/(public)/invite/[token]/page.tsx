@@ -14,7 +14,10 @@ export default async function InvitePage({ params }: { params: { token: string }
 
   if (!membership) {
     return (
-      <Shell title="Invite not found" description="This invite is invalid or has already been used.">
+      <Shell
+        title="Invite not found"
+        description="This invite is invalid or has already been used."
+      >
         <Button asChild>
           <Link href="/">Go home</Link>
         </Button>
@@ -72,13 +75,12 @@ function Shell({
   children: React.ReactNode;
 }) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-12">
-      <div className="w-full max-w-md space-y-4 rounded-lg border bg-card p-8 text-center shadow-sm">
+    <main className="bg-muted/30 flex min-h-screen items-center justify-center px-4 py-12">
+      <div className="bg-card w-full max-w-md space-y-4 rounded-lg border p-8 text-center shadow-sm">
         <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <p className="text-muted-foreground text-sm">{description}</p>
         <div className="flex justify-center pt-2">{children}</div>
       </div>
     </main>
   );
 }
-

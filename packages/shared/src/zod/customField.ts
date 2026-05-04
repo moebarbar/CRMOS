@@ -107,7 +107,8 @@ export function validateCustomFields(
       }
       case 'EMAIL': {
         const s = String(raw);
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)) issues.push({ key: def.key, message: 'invalid email' });
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s))
+          issues.push({ key: def.key, message: 'invalid email' });
         else out[def.key] = s.toLowerCase();
         break;
       }

@@ -27,22 +27,22 @@ export default async function CompanyDetailPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start gap-4 rounded-lg border bg-card p-6">
-        <div className="grid h-14 w-14 shrink-0 place-items-center rounded-md bg-muted">
+      <div className="bg-card flex items-start gap-4 rounded-lg border p-6">
+        <div className="bg-muted grid h-14 w-14 shrink-0 place-items-center rounded-md">
           {company.logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={company.logoUrl} alt="" className="h-14 w-14 rounded-md object-cover" />
           ) : (
-            <Building2 className="h-6 w-6 text-muted-foreground" />
+            <Building2 className="text-muted-foreground h-6 w-6" />
           )}
         </div>
         <div className="min-w-0 flex-1 space-y-1">
           <h1 className="text-2xl font-semibold tracking-tight">{company.name}</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {[company.domain, company.industry, company.size].filter(Boolean).join(' · ')}
           </p>
           {company.description && (
-            <p className="text-sm text-muted-foreground">{company.description}</p>
+            <p className="text-muted-foreground text-sm">{company.description}</p>
           )}
         </div>
         <div className="flex gap-2">
@@ -64,7 +64,7 @@ export default async function CompanyDetailPage({
           </CardHeader>
           <CardContent>
             {company.contacts.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No contacts at this company yet.</p>
+              <p className="text-muted-foreground text-sm">No contacts at this company yet.</p>
             ) : (
               <ul className="divide-y">
                 {company.contacts.map((c) => (
@@ -74,7 +74,7 @@ export default async function CompanyDetailPage({
                       className="flex items-center justify-between py-2 text-sm hover:underline"
                     >
                       <span>{fullName(c) || c.email || 'Untitled'}</span>
-                      <span className="text-xs text-muted-foreground">{c.jobTitle}</span>
+                      <span className="text-muted-foreground text-xs">{c.jobTitle}</span>
                     </Link>
                   </li>
                 ))}
@@ -83,7 +83,7 @@ export default async function CompanyDetailPage({
           </CardContent>
         </Card>
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h2 className="text-muted-foreground text-sm font-semibold uppercase tracking-wider">
             Activity
           </h2>
           <ActivityTimeline targetType="COMPANY" targetId={company.id} />

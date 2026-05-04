@@ -15,7 +15,12 @@ export interface DealCardData {
   currency: string;
   status: 'OPEN' | 'WON' | 'LOST';
   stageId: string;
-  contact: { id: string; firstName: string | null; lastName: string | null; email: string | null } | null;
+  contact: {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    email: string | null;
+  } | null;
   company: { id: string; name: string; logoUrl: string | null } | null;
   expectedCloseDate: Date | null;
 }
@@ -40,16 +45,14 @@ export function DealCard({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const contactLabel = deal.contact
-    ? fullName(deal.contact) || deal.contact.email
-    : null;
+  const contactLabel = deal.contact ? fullName(deal.contact) || deal.contact.email : null;
 
   return (
     <Link
       href={`/${workspaceSlug}/deals/${deal.id}`}
       className={cn(
-        'block rounded-md border bg-card p-3 text-left shadow-sm transition-colors hover:bg-accent/30',
-        isDragging && 'ring-2 ring-primary',
+        'bg-card hover:bg-accent/30 block rounded-md border p-3 text-left shadow-sm transition-colors',
+        isDragging && 'ring-primary ring-2',
       )}
       ref={setNodeRef}
       style={style}
@@ -61,7 +64,7 @@ export function DealCard({
         {formatMoney(deal.value, deal.currency)}
       </p>
       {(deal.company || contactLabel) && (
-        <div className="mt-2 space-y-0.5 text-xs text-muted-foreground">
+        <div className="text-muted-foreground mt-2 space-y-0.5 text-xs">
           {deal.company && (
             <p className="flex items-center gap-1">
               <Building2 className="h-3 w-3" />

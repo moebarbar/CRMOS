@@ -111,8 +111,7 @@ export function ContactImportWizard({ workspaceSlug }: { workspaceSlug: string }
   }, [rows, mapping]);
 
   const validRowCount = useMemo(
-    () =>
-      mapped.filter((r) => r.firstName || r.lastName || r.email || r.phone).length,
+    () => mapped.filter((r) => r.firstName || r.lastName || r.email || r.phone).length,
     [mapped],
   );
 
@@ -123,11 +122,11 @@ export function ContactImportWizard({ workspaceSlug }: { workspaceSlug: string }
           <CardTitle>Upload a CSV</CardTitle>
         </CardHeader>
         <CardContent>
-          <label className="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed bg-muted/30 px-6 py-12 text-center transition-colors hover:bg-muted/50">
-            <Upload className="h-6 w-6 text-muted-foreground" />
+          <label className="bg-muted/30 hover:bg-muted/50 flex cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed px-6 py-12 text-center transition-colors">
+            <Upload className="text-muted-foreground h-6 w-6" />
             <div>
               <p className="text-sm font-medium">Drop a CSV file here, or click to browse</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Up to 2,000 rows. Header row required.
               </p>
             </div>
@@ -198,7 +197,7 @@ export function ContactImportWizard({ workspaceSlug }: { workspaceSlug: string }
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="mb-4 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mb-4 text-sm">
             Match each CSV column to a contact field. Unmatched columns are ignored.
           </p>
           <ul className="divide-y rounded-lg border">
@@ -206,7 +205,7 @@ export function ContactImportWizard({ workspaceSlug }: { workspaceSlug: string }
               <li key={h} className="flex items-center gap-3 px-4 py-2">
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{h}</p>
-                  <p className="truncate text-xs text-muted-foreground">
+                  <p className="text-muted-foreground truncate text-xs">
                     Sample: {rows[0]?.[h] ?? '—'}
                   </p>
                 </div>
@@ -215,7 +214,7 @@ export function ContactImportWizard({ workspaceSlug }: { workspaceSlug: string }
                   onChange={(e) =>
                     setMapping((m) => ({ ...m, [h]: e.target.value as TargetKey | '' }))
                   }
-                  className="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
+                  className="border-input h-9 rounded-md border bg-transparent px-3 text-sm shadow-sm"
                 >
                   <option value="">— ignore —</option>
                   {TARGET_FIELDS.map((f) => (
@@ -232,12 +231,14 @@ export function ContactImportWizard({ workspaceSlug }: { workspaceSlug: string }
 
       <Card>
         <CardHeader>
-          <CardTitle>Preview ({validRowCount} of {rows.length} rows will import)</CardTitle>
+          <CardTitle>
+            Preview ({validRowCount} of {rows.length} rows will import)
+          </CardTitle>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-xs uppercase tracking-wider text-muted-foreground">
+              <tr className="text-muted-foreground border-b text-left text-xs uppercase tracking-wider">
                 {TARGET_FIELDS.map((f) => (
                   <th key={f.key} className="px-3 py-2">
                     {f.label}
@@ -249,7 +250,7 @@ export function ContactImportWizard({ workspaceSlug }: { workspaceSlug: string }
               {mapped.slice(0, 10).map((r, i) => (
                 <tr key={i} className="border-b last:border-0">
                   {TARGET_FIELDS.map((f) => (
-                    <td key={f.key} className="px-3 py-1.5 text-muted-foreground">
+                    <td key={f.key} className="text-muted-foreground px-3 py-1.5">
                       {r[f.key] ?? <span className="text-muted-foreground/60">—</span>}
                     </td>
                   ))}
@@ -258,7 +259,7 @@ export function ContactImportWizard({ workspaceSlug }: { workspaceSlug: string }
             </tbody>
           </table>
           {rows.length > 10 && (
-            <p className="mt-3 text-xs text-muted-foreground">
+            <p className="text-muted-foreground mt-3 text-xs">
               Showing first 10 of {rows.length} rows.
             </p>
           )}
@@ -305,8 +306,8 @@ export function ContactImportWizard({ workspaceSlug }: { workspaceSlug: string }
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <li className="rounded-lg border bg-card px-4 py-3">
-      <p className="text-xs text-muted-foreground">{label}</p>
+    <li className="bg-card rounded-lg border px-4 py-3">
+      <p className="text-muted-foreground text-xs">{label}</p>
       <p className="text-2xl font-semibold tabular-nums">{value}</p>
     </li>
   );

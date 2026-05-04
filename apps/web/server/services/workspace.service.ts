@@ -2,18 +2,12 @@ import 'server-only';
 import { TRPCError } from '@trpc/server';
 import type { Context } from '@/server/trpc/context';
 import { Role } from '@chiefos/db';
-import type {
-  CreateWorkspaceInput,
-  UpdateWorkspaceInput,
-} from '@chiefos/shared/zod/workspace';
+import type { CreateWorkspaceInput, UpdateWorkspaceInput } from '@chiefos/shared/zod/workspace';
 import { inngest } from '@/lib/inngest/client';
 import { activityService } from './activity.service';
 
 export const workspaceService = {
-  async create(
-    ctx: Context & { user: NonNullable<Context['user']> },
-    input: CreateWorkspaceInput,
-  ) {
+  async create(ctx: Context & { user: NonNullable<Context['user']> }, input: CreateWorkspaceInput) {
     const existing = await ctx.prisma.workspace.findUnique({ where: { slug: input.slug } });
     if (existing) {
       throw new TRPCError({ code: 'CONFLICT', message: 'That URL is taken.' });
@@ -57,7 +51,9 @@ export const workspaceService = {
   },
 
   async update(
-    ctx: Context & { workspace: NonNullable<Awaited<ReturnType<Context['prisma']['workspace']['findFirst']>>> },
+    ctx: Context & {
+      workspace: NonNullable<Awaited<ReturnType<Context['prisma']['workspace']['findFirst']>>>;
+    },
     input: UpdateWorkspaceInput,
   ) {
     const { id, ...data } = input;

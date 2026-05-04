@@ -4,11 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 export const metadata = { title: 'Settings' };
 
-export default async function SettingsPage({
-  params,
-}: {
-  params: { workspace: string };
-}) {
+export default async function SettingsPage({ params }: { params: { workspace: string } }) {
   const caller = await getServerCaller(params.workspace);
   const workspace = await caller.workspace.current();
 
@@ -16,7 +12,7 @@ export default async function SettingsPage({
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
-        <p className="text-sm text-muted-foreground">Manage {workspace.name}.</p>
+        <p className="text-muted-foreground text-sm">Manage {workspace.name}.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -52,7 +48,7 @@ export default async function SettingsPage({
           </CardHeader>
           <CardContent>
             <Link
-              className="text-sm font-medium text-primary hover:underline"
+              className="text-primary text-sm font-medium hover:underline"
               href={`/${params.workspace}/settings/team`}
             >
               Manage team →
@@ -67,7 +63,7 @@ export default async function SettingsPage({
           </CardHeader>
           <CardContent>
             <Link
-              className="text-sm font-medium text-primary hover:underline"
+              className="text-primary text-sm font-medium hover:underline"
               href={`/${params.workspace}/settings/tags`}
             >
               Manage tags →
@@ -82,7 +78,7 @@ export default async function SettingsPage({
           </CardHeader>
           <CardContent>
             <Link
-              className="text-sm font-medium text-primary hover:underline"
+              className="text-primary text-sm font-medium hover:underline"
               href={`/${params.workspace}/settings/fields`}
             >
               Manage custom fields →

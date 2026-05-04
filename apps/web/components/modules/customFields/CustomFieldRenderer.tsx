@@ -30,10 +30,10 @@ export function CustomFieldRenderer({ def, value, onChange, error }: Props) {
     <div className="space-y-1.5">
       <Label htmlFor={def.id}>
         {def.label}
-        {def.required && <span className="ml-1 text-destructive">*</span>}
+        {def.required && <span className="text-destructive ml-1">*</span>}
       </Label>
       <Field def={def} value={value} onChange={onChange} />
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && <p className="text-destructive text-xs">{error}</p>}
     </div>
   );
 }
@@ -120,7 +120,7 @@ function Field({ def, value, onChange }: Pick<Props, 'def' | 'value' | 'onChange
       return (
         <select
           id={def.id}
-          className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
+          className="border-input h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-sm"
           value={(value as string) ?? ''}
           onChange={(e) => onChange(e.target.value || null)}
         >
@@ -135,7 +135,7 @@ function Field({ def, value, onChange }: Pick<Props, 'def' | 'value' | 'onChange
     case 'MULTI_SELECT': {
       const arr = Array.isArray(value) ? (value as string[]) : [];
       return (
-        <div className="flex flex-wrap gap-2 rounded-md border border-input p-2">
+        <div className="border-input flex flex-wrap gap-2 rounded-md border p-2">
           {def.options?.map((o) => {
             const checked = arr.includes(o.value);
             return (
@@ -145,9 +145,7 @@ function Field({ def, value, onChange }: Pick<Props, 'def' | 'value' | 'onChange
                   checked={checked}
                   onChange={(e) => {
                     onChange(
-                      e.target.checked
-                        ? [...arr, o.value]
-                        : arr.filter((v) => v !== o.value),
+                      e.target.checked ? [...arr, o.value] : arr.filter((v) => v !== o.value),
                     );
                   }}
                 />

@@ -31,12 +31,18 @@ export default async function DealDetailPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 rounded-lg border bg-card p-6 md:flex-row md:items-start">
+      <div className="bg-card flex flex-col gap-4 rounded-lg border p-6 md:flex-row md:items-start">
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-semibold tracking-tight">{deal.title}</h1>
             <Badge
-              variant={deal.status === 'WON' ? 'default' : deal.status === 'LOST' ? 'destructive' : 'secondary'}
+              variant={
+                deal.status === 'WON'
+                  ? 'default'
+                  : deal.status === 'LOST'
+                    ? 'destructive'
+                    : 'secondary'
+              }
             >
               {deal.status}
             </Badge>
@@ -45,7 +51,7 @@ export default async function DealDetailPage({
           <p className="text-3xl font-semibold tabular-nums">
             {formatMoney(deal.value, deal.currency)}
           </p>
-          <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex flex-wrap gap-3 text-sm">
             <span>Pipeline: {deal.pipeline.name}</span>
             {deal.expectedCloseDate && (
               <span>Expected close: {new Date(deal.expectedCloseDate).toLocaleDateString()}</span>
@@ -53,7 +59,7 @@ export default async function DealDetailPage({
             {deal.closedAt && <span>Closed {relativeTime(deal.closedAt)}</span>}
           </div>
           {deal.lostReason && (
-            <p className="rounded-md border border-destructive/30 bg-destructive/10 p-2 text-sm">
+            <p className="border-destructive/30 bg-destructive/10 rounded-md border p-2 text-sm">
               <strong>Lost reason:</strong> {deal.lostReason}
             </p>
           )}
@@ -129,7 +135,7 @@ export default async function DealDetailPage({
         </Card>
 
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <h2 className="text-muted-foreground text-sm font-semibold uppercase tracking-wider">
             Activity
           </h2>
           <ActivityTimeline targetType="DEAL" targetId={deal.id} />

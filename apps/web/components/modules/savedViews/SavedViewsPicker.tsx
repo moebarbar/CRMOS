@@ -109,7 +109,12 @@ export function SavedViewsPicker<TFilters extends Record<string, unknown>>({
               onChange={(e) => setName(e.target.value)}
               className="h-7 text-xs"
             />
-            <Button type="submit" size="sm" className="h-7 px-2 text-xs" disabled={create.isPending}>
+            <Button
+              type="submit"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              disabled={create.isPending}
+            >
               Save
             </Button>
           </form>

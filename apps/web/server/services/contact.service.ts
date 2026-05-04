@@ -66,7 +66,7 @@ export const contactService = {
     const items = hasMore ? rows.slice(0, input.limit) : rows;
     return {
       items,
-      nextCursor: hasMore ? items[items.length - 1]?.id ?? null : null,
+      nextCursor: hasMore ? (items[items.length - 1]?.id ?? null) : null,
     };
   },
 
@@ -107,9 +107,7 @@ export const contactService = {
       targetType: 'CONTACT',
       targetId: contact.id,
       payload: {
-        name:
-          `${contact.firstName ?? ''} ${contact.lastName ?? ''}`.trim() ||
-          contact.email,
+        name: `${contact.firstName ?? ''} ${contact.lastName ?? ''}`.trim() || contact.email,
       },
     });
 
@@ -208,14 +206,10 @@ export const contactService = {
       country: r.country?.trim() || null,
     }));
 
-    const valid = normalized.filter(
-      (r) => r.firstName || r.lastName || r.email || r.phone,
-    );
+    const valid = normalized.filter((r) => r.firstName || r.lastName || r.email || r.phone);
     const skipped = normalized.length - valid.length;
 
-    const emails = valid
-      .map((r) => r.email)
-      .filter((e): e is string => Boolean(e));
+    const emails = valid.map((r) => r.email).filter((e): e is string => Boolean(e));
     const existingByEmail = new Map(
       (
         await ctx.prisma.contact.findMany({

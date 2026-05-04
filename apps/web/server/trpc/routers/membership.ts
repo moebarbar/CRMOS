@@ -129,7 +129,10 @@ export const membershipRouter = createTRPCRouter({
         include: { workspace: { select: { slug: true, name: true } } },
       });
       if (!membership) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'This invite is invalid or already used.' });
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'This invite is invalid or already used.',
+        });
       }
       if (membership.inviteExpiresAt && membership.inviteExpiresAt < new Date()) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'This invite has expired.' });

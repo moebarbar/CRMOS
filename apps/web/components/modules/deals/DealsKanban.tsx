@@ -83,9 +83,7 @@ export function DealsKanban({ workspaceSlug }: { workspaceSlug: string }) {
     },
   });
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-  );
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
   if (pipelines.isLoading) {
     return <Skeleton className="h-96 w-full" />;
@@ -93,9 +91,9 @@ export function DealsKanban({ workspaceSlug }: { workspaceSlug: string }) {
 
   if (!activePipeline) {
     return (
-      <div className="rounded-lg border bg-card p-12 text-center">
+      <div className="bg-card rounded-lg border p-12 text-center">
         <p className="text-sm font-medium">No pipelines yet.</p>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-1 text-sm">
           Create a default Sales pipeline to get started.
         </p>
         <Button
@@ -151,7 +149,7 @@ export function DealsKanban({ workspaceSlug }: { workspaceSlug: string }) {
         <select
           value={activePipeline.id}
           onChange={(e) => setPipelineId(e.target.value)}
-          className="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
+          className="border-input h-9 rounded-md border bg-transparent px-3 text-sm shadow-sm"
         >
           {pipelines.data!.map((p) => (
             <option key={p.id} value={p.id}>
@@ -214,8 +212,8 @@ function StageColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        'flex w-72 shrink-0 flex-col gap-2 rounded-lg border bg-muted/30 p-2 transition-colors',
-        isOver && 'ring-2 ring-primary',
+        'bg-muted/30 flex w-72 shrink-0 flex-col gap-2 rounded-lg border p-2 transition-colors',
+        isOver && 'ring-primary ring-2',
       )}
     >
       <div className="flex items-center gap-2 px-1">
@@ -225,21 +223,17 @@ function StageColumn({
           style={{ backgroundColor: stage.color }}
         />
         <p className="flex-1 text-sm font-semibold">{stage.name}</p>
-        <span className="text-xs text-muted-foreground">{deals.length}</span>
+        <span className="text-muted-foreground text-xs">{deals.length}</span>
       </div>
-      <p className="px-1 text-xs tabular-nums text-muted-foreground">
+      <p className="text-muted-foreground px-1 text-xs tabular-nums">
         {formatMoney(totalValue, deals[0]?.currency ?? 'USD')}
       </p>
       <div className="flex flex-1 flex-col gap-2">
         {isLoading
-          ? Array.from({ length: 2 }).map((_, i) => (
-              <Skeleton key={i} className="h-20 w-full" />
-            ))
-          : deals.map((d) => (
-              <DealCard key={d.id} deal={d} workspaceSlug={workspaceSlug} />
-            ))}
+          ? Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-20 w-full" />)
+          : deals.map((d) => <DealCard key={d.id} deal={d} workspaceSlug={workspaceSlug} />)}
         {!isLoading && deals.length === 0 && (
-          <p className="rounded-md border border-dashed bg-background/50 p-3 text-center text-xs text-muted-foreground">
+          <p className="bg-background/50 text-muted-foreground rounded-md border border-dashed p-3 text-center text-xs">
             Drop here
           </p>
         )}

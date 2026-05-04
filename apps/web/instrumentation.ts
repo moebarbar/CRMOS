@@ -9,7 +9,9 @@ export async function register() {
   }
 }
 
-export async function onRequestError(...args: Parameters<typeof import('@sentry/nextjs').captureRequestError>) {
+export async function onRequestError(
+  ...args: Parameters<typeof import('@sentry/nextjs').captureRequestError>
+) {
   if (!process.env.SENTRY_DSN && !process.env.NEXT_PUBLIC_SENTRY_DSN) return;
   const { captureRequestError } = await import('@sentry/nextjs');
   return captureRequestError(...args);

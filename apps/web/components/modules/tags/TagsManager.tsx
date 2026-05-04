@@ -63,17 +63,17 @@ export function TagsManager() {
     <div className="space-y-6">
       <form
         onSubmit={handleSubmit((v) => create.mutate(v))}
-        className="flex flex-wrap items-end gap-3 rounded-lg border bg-card p-4"
+        className="bg-card flex flex-wrap items-end gap-3 rounded-lg border p-4"
       >
-        <div className="flex-1 min-w-[200px] space-y-1.5">
+        <div className="min-w-[200px] flex-1 space-y-1.5">
           <Label htmlFor="tag-name">Name</Label>
           <Input id="tag-name" placeholder="VIP, Partner, …" {...register('name')} />
-          {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+          {errors.name && <p className="text-destructive text-xs">{errors.name.message}</p>}
         </div>
         <div className="space-y-1.5">
           <Label>Scope</Label>
           <select
-            className="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
+            className="border-input h-9 rounded-md border bg-transparent px-3 text-sm shadow-sm"
             {...register('scope')}
           >
             {tagSchemas.TAG_SCOPES.map((s) => (
@@ -85,7 +85,10 @@ export function TagsManager() {
         </div>
         <div className="space-y-1.5">
           <Label>Color</Label>
-          <ColorPicker value={color} onChange={(c) => setValue('color', c, { shouldValidate: true })} />
+          <ColorPicker
+            value={color}
+            onChange={(c) => setValue('color', c, { shouldValidate: true })}
+          />
         </div>
         <Button type="submit" disabled={create.isPending}>
           {create.isPending ? 'Adding…' : 'Add tag'}
@@ -95,16 +98,13 @@ export function TagsManager() {
       {list.isLoading ? (
         <Skeleton className="h-32 w-full" />
       ) : !list.data || list.data.length === 0 ? (
-        <p className="rounded-lg border bg-card p-6 text-center text-sm text-muted-foreground">
+        <p className="bg-card text-muted-foreground rounded-lg border p-6 text-center text-sm">
           No tags yet.
         </p>
       ) : (
         <ul className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
           {list.data.map((t) => (
-            <li
-              key={t.id}
-              className="flex items-center gap-3 rounded-lg border bg-card px-3 py-2"
-            >
+            <li key={t.id} className="bg-card flex items-center gap-3 rounded-lg border px-3 py-2">
               <span
                 aria-hidden
                 className="h-3 w-3 shrink-0 rounded-full"
@@ -112,7 +112,7 @@ export function TagsManager() {
               />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">{t.name}</p>
-                <p className="text-xs text-muted-foreground">{t.scope.toLowerCase()}</p>
+                <p className="text-muted-foreground text-xs">{t.scope.toLowerCase()}</p>
               </div>
               <Button
                 variant="ghost"
@@ -142,7 +142,7 @@ function ColorPicker({ value, onChange }: { value: string; onChange: (c: string)
           onClick={() => onChange(c)}
           className={
             'h-6 w-6 rounded-full border-2 transition-transform ' +
-            (value === c ? 'scale-110 border-foreground' : 'border-transparent')
+            (value === c ? 'border-foreground scale-110' : 'border-transparent')
           }
           style={{ backgroundColor: c }}
           aria-label={c}

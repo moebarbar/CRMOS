@@ -50,9 +50,9 @@ export default function MarketingHome() {
                 business. <span className="highlight">Or tell Moe.</span>
               </h1>
               <p className="hero-sub">
-                CRMOS is one app where leads, proposals, contracts, invoices, projects,
-                scheduling, time, and client comms live together — and an AI agent named Moe
-                takes voice or text commands and just does the work.
+                CRMOS is one app where leads, proposals, contracts, invoices, projects, scheduling,
+                time, and client comms live together — and an AI agent named Moe takes voice or text
+                commands and just does the work.
               </p>
               <div className="hero-cta">
                 <Link href="/sign-up" className="btn primary lg">

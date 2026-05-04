@@ -13,9 +13,7 @@ export default defineConfig({
     baseURL,
     trace: 'retain-on-failure',
   },
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-  ],
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: process.env.CI
     ? {
         command: 'pnpm --filter @chiefos/web start',

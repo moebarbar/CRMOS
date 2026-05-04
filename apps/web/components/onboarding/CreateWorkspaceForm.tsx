@@ -42,7 +42,7 @@ export function CreateWorkspaceForm() {
 
   return (
     <form
-      className="space-y-4 rounded-lg border bg-card p-6 shadow-sm"
+      className="bg-card space-y-4 rounded-lg border p-6 shadow-sm"
       onSubmit={handleSubmit((values) => create.mutate(values))}
     >
       <div className="space-y-1.5">
@@ -63,20 +63,20 @@ export function CreateWorkspaceForm() {
             },
           })}
         />
-        {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+        {errors.name && <p className="text-destructive text-xs">{errors.name.message}</p>}
       </div>
 
       <div className="space-y-1.5">
         <Label htmlFor="slug">URL</Label>
-        <div className="flex items-center overflow-hidden rounded-md border bg-background focus-within:ring-1 focus-within:ring-ring">
-          <span className="px-3 text-xs text-muted-foreground">chiefos.app/</span>
+        <div className="bg-background focus-within:ring-ring flex items-center overflow-hidden rounded-md border focus-within:ring-1">
+          <span className="text-muted-foreground px-3 text-xs">chiefos.app/</span>
           <input
             id="slug"
             className="flex-1 bg-transparent py-1.5 pr-3 text-sm outline-none"
             {...register('slug')}
           />
         </div>
-        {errors.slug && <p className="text-xs text-destructive">{errors.slug.message}</p>}
+        {errors.slug && <p className="text-destructive text-xs">{errors.slug.message}</p>}
       </div>
 
       <Button type="submit" className="w-full" disabled={isSubmitting || create.isPending}>

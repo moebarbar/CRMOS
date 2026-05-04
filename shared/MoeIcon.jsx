@@ -8,10 +8,13 @@ const MoeIcon = ({ size = 48, state = 'idle', accent = 'var(--lime)' }) => {
   const [pupil, setPupil] = React.useState({ x: 0, y: 0 });
 
   React.useEffect(() => {
-    const blinkT = setInterval(() => {
-      setBlink(true);
-      setTimeout(() => setBlink(false), 140);
-    }, 3500 + Math.random() * 2000);
+    const blinkT = setInterval(
+      () => {
+        setBlink(true);
+        setTimeout(() => setBlink(false), 140);
+      },
+      3500 + Math.random() * 2000,
+    );
     return () => clearInterval(blinkT);
   }, []);
 
@@ -28,13 +31,19 @@ const MoeIcon = ({ size = 48, state = 'idle', accent = 'var(--lime)' }) => {
       });
     }, interval);
     // First glance shortly after mount so it doesn't sit dead-center
-    const first = setTimeout(() => {
-      setPupil({
-        x: (Math.random() - 0.5) * range.x * 2,
-        y: (Math.random() - 0.5) * range.y * 2,
-      });
-    }, 400 + Math.random() * 800);
-    return () => { clearInterval(t); clearTimeout(first); };
+    const first = setTimeout(
+      () => {
+        setPupil({
+          x: (Math.random() - 0.5) * range.x * 2,
+          y: (Math.random() - 0.5) * range.y * 2,
+        });
+      },
+      400 + Math.random() * 800,
+    );
+    return () => {
+      clearInterval(t);
+      clearTimeout(first);
+    };
   }, [state]);
 
   const eyeR = 5.5;
@@ -55,7 +64,12 @@ const MoeIcon = ({ size = 48, state = 'idle', accent = 'var(--lime)' }) => {
   const pupilDark = `color-mix(in oklab, ${accent} 35%, #050810 70%)`;
 
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" style={{ display: 'block', overflow: 'visible' }}>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 64 64"
+      style={{ display: 'block', overflow: 'visible' }}
+    >
       <defs>
         <linearGradient id={`${id}-face`} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor={faceTop} />
@@ -74,31 +88,50 @@ const MoeIcon = ({ size = 48, state = 'idle', accent = 'var(--lime)' }) => {
 
       {/* Halo ring — always animating; intensity varies by state */}
       <circle
-        cx="32" cy="33" r="29"
+        cx="32"
+        cy="33"
+        r="29"
         fill="none"
         stroke={accent}
         strokeWidth="1"
         opacity={isListening || isSpeaking ? 0.55 : isThinking ? 0.4 : 0.28}
-        strokeDasharray={isThinking ? "2 5" : "3 4"}
+        strokeDasharray={isThinking ? '2 5' : '3 4'}
       >
         <animateTransform
           attributeName="transform"
           type="rotate"
           from="0 32 33"
           to="360 32 33"
-          dur={isListening || isSpeaking ? "6s" : isThinking ? "4s" : "10s"}
+          dur={isListening || isSpeaking ? '6s' : isThinking ? '4s' : '10s'}
           repeatCount="indefinite"
         />
       </circle>
 
       {/* Antenna */}
-      <line x1="32" y1="6" x2="32" y2="12" stroke={faceStroke} strokeWidth="1.6" strokeLinecap="round" />
+      <line
+        x1="32"
+        y1="6"
+        x2="32"
+        y2="12"
+        stroke={faceStroke}
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
       <circle cx="32" cy="5" r="2.2" fill={accent} stroke={eyeWhite} strokeWidth="0.8">
         <animate attributeName="r" values="1.8;2.6;1.8" dur="2s" repeatCount="indefinite" />
       </circle>
 
       {/* Head — squircle */}
-      <rect x="10" y="12" width="44" height="42" rx="14" fill={`url(#${id}-face)`} stroke={faceStroke} strokeWidth="1.2" />
+      <rect
+        x="10"
+        y="12"
+        width="44"
+        height="42"
+        rx="14"
+        fill={`url(#${id}-face)`}
+        stroke={faceStroke}
+        strokeWidth="1.2"
+      />
       <rect x="10" y="12" width="44" height="22" rx="14" fill={`url(#${id}-shine)`} />
 
       {/* Side vent panels — small accent details */}
@@ -113,25 +146,71 @@ const MoeIcon = ({ size = 48, state = 'idle', accent = 'var(--lime)' }) => {
 
       {/* Brow — expression */}
       <path
-        d={isThinking ? "M 19 25 Q 23 22 28 24" : "M 19 26 L 28 26"}
-        stroke={faceStroke} strokeWidth="1.8" strokeLinecap="round" fill="none"
+        d={isThinking ? 'M 19 25 Q 23 22 28 24' : 'M 19 26 L 28 26'}
+        stroke={faceStroke}
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        fill="none"
       />
       <path
-        d={isThinking ? "M 36 24 Q 41 22 45 25" : "M 36 26 L 45 26"}
-        stroke={faceStroke} strokeWidth="1.8" strokeLinecap="round" fill="none"
+        d={isThinking ? 'M 36 24 Q 41 22 45 25' : 'M 36 26 L 45 26'}
+        stroke={faceStroke}
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        fill="none"
       />
 
       {/* Eyes — high contrast white with dark pupil */}
       <g>
         {/* Left eye */}
-        <ellipse cx="24" cy={34} rx={eyeR} ry={blink ? 0.6 : eyeR} fill={eyeWhite} stroke={eyeRing} strokeWidth="0.6" />
-        <circle cx={24 + pupil.x} cy={34 + pupil.y} r="2.6" fill={pupilDark} opacity={blink ? 0 : 1} />
-        <circle cx={24 + pupil.x - 0.9} cy={34 + pupil.y - 1} r="0.9" fill={eyeWhite} opacity={blink ? 0 : 1} />
+        <ellipse
+          cx="24"
+          cy={34}
+          rx={eyeR}
+          ry={blink ? 0.6 : eyeR}
+          fill={eyeWhite}
+          stroke={eyeRing}
+          strokeWidth="0.6"
+        />
+        <circle
+          cx={24 + pupil.x}
+          cy={34 + pupil.y}
+          r="2.6"
+          fill={pupilDark}
+          opacity={blink ? 0 : 1}
+        />
+        <circle
+          cx={24 + pupil.x - 0.9}
+          cy={34 + pupil.y - 1}
+          r="0.9"
+          fill={eyeWhite}
+          opacity={blink ? 0 : 1}
+        />
 
         {/* Right eye */}
-        <ellipse cx="40" cy={34} rx={eyeR} ry={blink ? 0.6 : eyeR} fill={eyeWhite} stroke={eyeRing} strokeWidth="0.6" />
-        <circle cx={40 + pupil.x} cy={34 + pupil.y} r="2.6" fill={pupilDark} opacity={blink ? 0 : 1} />
-        <circle cx={40 + pupil.x - 0.9} cy={34 + pupil.y - 1} r="0.9" fill={eyeWhite} opacity={blink ? 0 : 1} />
+        <ellipse
+          cx="40"
+          cy={34}
+          rx={eyeR}
+          ry={blink ? 0.6 : eyeR}
+          fill={eyeWhite}
+          stroke={eyeRing}
+          strokeWidth="0.6"
+        />
+        <circle
+          cx={40 + pupil.x}
+          cy={34 + pupil.y}
+          r="2.6"
+          fill={pupilDark}
+          opacity={blink ? 0 : 1}
+        />
+        <circle
+          cx={40 + pupil.x - 0.9}
+          cy={34 + pupil.y - 1}
+          r="0.9"
+          fill={eyeWhite}
+          opacity={blink ? 0 : 1}
+        />
       </g>
 
       {/* Mouth */}
@@ -139,8 +218,20 @@ const MoeIcon = ({ size = 48, state = 'idle', accent = 'var(--lime)' }) => {
         <g transform="translate(32 46)">
           {[-8, -4, 0, 4, 8].map((x, i) => (
             <rect key={i} x={x - 0.9} y="-3" width="1.8" height="6" rx="0.9" fill={eyeWhite}>
-              <animate attributeName="height" values={`2;${4 + (i % 2) * 3};2`} dur={`${0.5 + i * 0.07}s`} repeatCount="indefinite" begin={`${i * 0.05}s`} />
-              <animate attributeName="y" values={`-1;-${(4 + (i % 2) * 3) / 2};-1`} dur={`${0.5 + i * 0.07}s`} repeatCount="indefinite" begin={`${i * 0.05}s`} />
+              <animate
+                attributeName="height"
+                values={`2;${4 + (i % 2) * 3};2`}
+                dur={`${0.5 + i * 0.07}s`}
+                repeatCount="indefinite"
+                begin={`${i * 0.05}s`}
+              />
+              <animate
+                attributeName="y"
+                values={`-1;-${(4 + (i % 2) * 3) / 2};-1`}
+                dur={`${0.5 + i * 0.07}s`}
+                repeatCount="indefinite"
+                begin={`${i * 0.05}s`}
+              />
             </rect>
           ))}
         </g>
@@ -148,12 +239,24 @@ const MoeIcon = ({ size = 48, state = 'idle', accent = 'var(--lime)' }) => {
         <g transform="translate(32 46)">
           {[-6, 0, 6].map((x, i) => (
             <circle key={i} cx={x} cy="0" r="1.5" fill={eyeWhite}>
-              <animate attributeName="opacity" values="0.2;1;0.2" dur="1.2s" repeatCount="indefinite" begin={`${i * 0.2}s`} />
+              <animate
+                attributeName="opacity"
+                values="0.2;1;0.2"
+                dur="1.2s"
+                repeatCount="indefinite"
+                begin={`${i * 0.2}s`}
+              />
             </circle>
           ))}
         </g>
       ) : (
-        <path d="M 24 44 Q 32 50 40 44" stroke={eyeWhite} strokeWidth="2" fill="none" strokeLinecap="round" />
+        <path
+          d="M 24 44 Q 32 50 40 44"
+          stroke={eyeWhite}
+          strokeWidth="2"
+          fill="none"
+          strokeLinecap="round"
+        />
       )}
     </svg>
   );

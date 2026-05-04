@@ -50,7 +50,7 @@ export function ActivityTimeline({ targetType, targetId }: Props) {
   if (query.isLoading) return <Skeleton className="h-32 w-full" />;
   if (!grouped.length) {
     return (
-      <p className="rounded-lg border bg-card p-6 text-center text-sm text-muted-foreground">
+      <p className="bg-card text-muted-foreground rounded-lg border p-6 text-center text-sm">
         No activity yet.
       </p>
     );
@@ -66,8 +66,8 @@ export function ActivityTimeline({ targetType, targetId }: Props) {
             ? 'Moe'
             : 'System';
         return (
-          <li key={a.id} className="flex gap-3 rounded-lg border bg-card p-3">
-            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-muted">
+          <li key={a.id} className="bg-card flex gap-3 rounded-lg border p-3">
+            <div className="bg-muted grid h-8 w-8 shrink-0 place-items-center rounded-full">
               {a.actorType === 'moe' ? (
                 <Sparkles className="h-4 w-4" />
               ) : (
@@ -80,7 +80,7 @@ export function ActivityTimeline({ targetType, targetId }: Props) {
                 <span className="text-muted-foreground">{a.verb}</span>{' '}
                 <span className="text-muted-foreground">{a.targetType.toLowerCase()}</span>
               </p>
-              <p className="text-xs text-muted-foreground">{relativeTime(a.createdAt)}</p>
+              <p className="text-muted-foreground text-xs">{relativeTime(a.createdAt)}</p>
             </div>
           </li>
         );

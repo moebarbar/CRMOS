@@ -102,7 +102,7 @@ export function DealForm({ workspaceSlug, mode, initialPipelineId, initial }: Pr
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <div className="grid gap-4 rounded-lg border bg-card p-6 md:grid-cols-2">
+      <div className="bg-card grid gap-4 rounded-lg border p-6 md:grid-cols-2">
         <div className="md:col-span-2">
           <Field label="Title" error={errors.title?.message}>
             <Input {...register('title')} autoFocus placeholder="Acme Q4 retainer" />
@@ -110,7 +110,7 @@ export function DealForm({ workspaceSlug, mode, initialPipelineId, initial }: Pr
         </div>
         <Field label="Pipeline">
           <select
-            className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
+            className="border-input h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-sm"
             {...register('pipelineId')}
           >
             <option value="">—</option>
@@ -123,7 +123,7 @@ export function DealForm({ workspaceSlug, mode, initialPipelineId, initial }: Pr
         </Field>
         <Field label="Stage">
           <select
-            className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
+            className="border-input h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-sm"
             {...register('stageId')}
             disabled={!selectedPipeline}
           >
@@ -184,7 +184,7 @@ function Field({
     <div className="space-y-1.5">
       <Label>{label}</Label>
       {children}
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && <p className="text-destructive text-xs">{error}</p>}
     </div>
   );
 }

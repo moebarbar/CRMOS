@@ -46,8 +46,8 @@ export function MoePanel() {
 
       <div className="moe-panel-body">
         <div className="moe-bubble moe">
-          Morning. I scanned overnight — 1 signed proposal (Acme), 3 overdue invoices ($12.8k),
-          2 new leads from forms. Want to triage?
+          Morning. I scanned overnight — 1 signed proposal (Acme), 3 overdue invoices ($12.8k), 2
+          new leads from forms. Want to triage?
         </div>
         <div className="moe-bubble user">Show overdue and draft chases</div>
         <div className="moe-bubble moe">

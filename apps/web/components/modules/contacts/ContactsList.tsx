@@ -42,8 +42,8 @@ export function ContactsList({ workspaceSlug }: { workspaceSlug: string }) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <div className="relative flex-1 min-w-[240px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <div className="relative min-w-[240px] flex-1">
+          <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
           <Input
             value={filters.search}
             onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
@@ -53,10 +53,8 @@ export function ContactsList({ workspaceSlug }: { workspaceSlug: string }) {
         </div>
         <select
           value={filters.stage}
-          onChange={(e) =>
-            setFilters((f) => ({ ...f, stage: e.target.value as Filters['stage'] }))
-          }
-          className="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
+          onChange={(e) => setFilters((f) => ({ ...f, stage: e.target.value as Filters['stage'] }))}
+          className="border-input h-9 rounded-md border bg-transparent px-3 text-sm shadow-sm"
         >
           <option value="">All stages</option>
           {contactSchemas.LIFECYCLE_STAGES.map((s) => (
@@ -68,7 +66,7 @@ export function ContactsList({ workspaceSlug }: { workspaceSlug: string }) {
         <select
           value={filters.tagId}
           onChange={(e) => setFilters((f) => ({ ...f, tagId: e.target.value }))}
-          className="h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
+          className="border-input h-9 rounded-md border bg-transparent px-3 text-sm shadow-sm"
           disabled={!tags.data || tags.data.length === 0}
         >
           <option value="">All tags</option>
@@ -100,18 +98,18 @@ export function ContactsList({ workspaceSlug }: { workspaceSlug: string }) {
       {query.isLoading ? (
         <ListSkeleton />
       ) : query.error ? (
-        <div className="rounded-lg border bg-card p-8 text-center text-sm text-destructive">
+        <div className="bg-card text-destructive rounded-lg border p-8 text-center text-sm">
           {query.error.message}
         </div>
       ) : !query.data || query.data.items.length === 0 ? (
         <EmptyState workspaceSlug={workspaceSlug} hasFilter={hasFilter} />
       ) : (
-        <ul className="divide-y rounded-lg border bg-card">
+        <ul className="bg-card divide-y rounded-lg border">
           {query.data.items.map((c) => (
             <li key={c.id}>
               <Link
                 href={`/${workspaceSlug}/contacts/${c.id}`}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-accent/40"
+                className="hover:bg-accent/40 flex items-center gap-3 px-4 py-3"
               >
                 <Avatar>
                   {c.avatarUrl && <AvatarImage src={c.avatarUrl} alt="" />}
@@ -121,7 +119,7 @@ export function ContactsList({ workspaceSlug }: { workspaceSlug: string }) {
                   <p className="truncate text-sm font-medium">
                     {fullName(c) || c.email || 'Untitled contact'}
                   </p>
-                  <p className="truncate text-xs text-muted-foreground">
+                  <p className="text-muted-foreground truncate text-xs">
                     {[c.jobTitle, c.company?.name, c.email].filter(Boolean).join(' · ')}
                   </p>
                 </div>
@@ -139,7 +137,7 @@ export function ContactsList({ workspaceSlug }: { workspaceSlug: string }) {
                 <Badge variant="secondary" className="hidden sm:inline-flex">
                   {c.lifecycleStage}
                 </Badge>
-                <span className="hidden text-xs text-muted-foreground sm:block">
+                <span className="text-muted-foreground hidden text-xs sm:block">
                   {relativeTime(c.lastContactedAt ?? c.createdAt)}
                 </span>
               </Link>
@@ -153,7 +151,7 @@ export function ContactsList({ workspaceSlug }: { workspaceSlug: string }) {
 
 function ListSkeleton() {
   return (
-    <ul className="divide-y rounded-lg border bg-card">
+    <ul className="bg-card divide-y rounded-lg border">
       {Array.from({ length: 6 }).map((_, i) => (
         <li key={i} className="flex items-center gap-3 px-4 py-3">
           <Skeleton className="h-9 w-9 rounded-full" />
@@ -167,19 +165,13 @@ function ListSkeleton() {
   );
 }
 
-function EmptyState({
-  workspaceSlug,
-  hasFilter,
-}: {
-  workspaceSlug: string;
-  hasFilter: boolean;
-}) {
+function EmptyState({ workspaceSlug, hasFilter }: { workspaceSlug: string; hasFilter: boolean }) {
   return (
-    <div className="rounded-lg border bg-card p-12 text-center">
+    <div className="bg-card rounded-lg border p-12 text-center">
       <p className="text-sm font-medium">
         {hasFilter ? 'No contacts match those filters.' : 'No contacts yet.'}
       </p>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-1 text-sm">
         {hasFilter
           ? 'Clear filters or add a new contact.'
           : 'Get started by adding your first contact or importing a CSV.'}

@@ -1,5 +1,13 @@
 /** Deterministic-color initials avatar. Ported from shared/ui.jsx. */
-const COLORS = ['#c4f048', '#60a5fa', '#f59e0b', '#a78bfa', '#fb7185', '#34d399', '#fbbf24'] as const;
+const COLORS = [
+  '#c4f048',
+  '#60a5fa',
+  '#f59e0b',
+  '#a78bfa',
+  '#fb7185',
+  '#34d399',
+  '#fbbf24',
+] as const;
 
 export function BrandAvatar({
   name,

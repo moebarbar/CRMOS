@@ -52,19 +52,11 @@ export function ContactNotes({ contactId }: { contactId: string }) {
         onSubmit={handleSubmit((values) =>
           create.mutate({ targetType: 'CONTACT', targetId: contactId, body: values.body }),
         )}
-        className="space-y-2 rounded-lg border bg-card p-4"
+        className="bg-card space-y-2 rounded-lg border p-4"
       >
-        <Textarea
-          placeholder="Add a note about this contact…"
-          rows={3}
-          {...register('body')}
-        />
+        <Textarea placeholder="Add a note about this contact…" rows={3} {...register('body')} />
         <div className="flex justify-end">
-          <Button
-            type="submit"
-            size="sm"
-            disabled={!isValid || isSubmitting || create.isPending}
-          >
+          <Button type="submit" size="sm" disabled={!isValid || isSubmitting || create.isPending}>
             {create.isPending ? 'Saving…' : 'Add note'}
           </Button>
         </div>
@@ -73,14 +65,14 @@ export function ContactNotes({ contactId }: { contactId: string }) {
       {list.isLoading ? (
         <Skeleton className="h-24 w-full" />
       ) : !list.data || list.data.length === 0 ? (
-        <p className="rounded-lg border bg-card p-6 text-center text-sm text-muted-foreground">
+        <p className="bg-card text-muted-foreground rounded-lg border p-6 text-center text-sm">
           No notes yet.
         </p>
       ) : (
         <ul className="space-y-2">
           {list.data.map((n) => (
-            <li key={n.id} className="rounded-lg border bg-card p-4">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <li key={n.id} className="bg-card rounded-lg border p-4">
+              <div className="text-muted-foreground flex items-center justify-between text-xs">
                 <span>{relativeTime(n.createdAt)}</span>
                 <Button
                   variant="ghost"

@@ -4,11 +4,7 @@ import { InviteMemberForm } from '@/components/settings/InviteMemberForm';
 
 export const metadata = { title: 'Team' };
 
-export default async function TeamSettingsPage({
-  params,
-}: {
-  params: { workspace: string };
-}) {
+export default async function TeamSettingsPage({ params }: { params: { workspace: string } }) {
   const caller = await getServerCaller(params.workspace);
   const memberships = await caller.membership.list();
 
@@ -16,7 +12,7 @@ export default async function TeamSettingsPage({
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Team</h1>
-        <p className="text-sm text-muted-foreground">Invite teammates to your workspace.</p>
+        <p className="text-muted-foreground text-sm">Invite teammates to your workspace.</p>
       </div>
       <InviteMemberForm />
       <TeamMembersList memberships={memberships} />

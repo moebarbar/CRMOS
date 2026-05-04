@@ -13,11 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 type FormValues = customFieldSchemas.CreateCustomFieldInput;
 
-export function CustomFieldsManager({
-  entity,
-}: {
-  entity: customFieldSchemas.CustomFieldEntity;
-}) {
+export function CustomFieldsManager({ entity }: { entity: customFieldSchemas.CustomFieldEntity }) {
   const utils = trpc.useUtils();
   const list = trpc.customFields.list.useQuery({ entity });
   const [optionsText, setOptionsText] = useState('');
@@ -64,7 +60,10 @@ export function CustomFieldsManager({
               .map((line) => line.trim())
               .filter(Boolean)
               .map((label) => ({
-                value: label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, ''),
+                value: label
+                  .toLowerCase()
+                  .replace(/[^a-z0-9]+/g, '_')
+                  .replace(/^_|_$/g, ''),
                 label,
               }));
           } else {
@@ -72,22 +71,22 @@ export function CustomFieldsManager({
           }
           create.mutate(values);
         })}
-        className="grid gap-3 rounded-lg border bg-card p-4 md:grid-cols-2"
+        className="bg-card grid gap-3 rounded-lg border p-4 md:grid-cols-2"
       >
         <div className="space-y-1.5">
           <Label>Label</Label>
           <Input placeholder="Budget tier" {...register('label')} />
-          {errors.label && <p className="text-xs text-destructive">{errors.label.message}</p>}
+          {errors.label && <p className="text-destructive text-xs">{errors.label.message}</p>}
         </div>
         <div className="space-y-1.5">
           <Label>Key (snake_case)</Label>
           <Input placeholder="budget_tier" {...register('key')} />
-          {errors.key && <p className="text-xs text-destructive">{errors.key.message}</p>}
+          {errors.key && <p className="text-destructive text-xs">{errors.key.message}</p>}
         </div>
         <div className="space-y-1.5">
           <Label>Type</Label>
           <select
-            className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
+            className="border-input h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-sm"
             {...register('type')}
           >
             {customFieldSchemas.CUSTOM_FIELD_TYPES.map((t) => (
@@ -106,7 +105,7 @@ export function CustomFieldsManager({
           <div className="space-y-1.5 md:col-span-2">
             <Label>Options (one per line)</Label>
             <textarea
-              className="min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm"
+              className="border-input min-h-[80px] w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm"
               placeholder={'Small\nMedium\nLarge'}
               value={optionsText}
               onChange={(e) => setOptionsText(e.target.value)}
@@ -124,16 +123,16 @@ export function CustomFieldsManager({
       {list.isLoading ? (
         <Skeleton className="h-32 w-full" />
       ) : !list.data || list.data.length === 0 ? (
-        <p className="rounded-lg border bg-card p-6 text-center text-sm text-muted-foreground">
+        <p className="bg-card text-muted-foreground rounded-lg border p-6 text-center text-sm">
           No custom fields for {entity.toLowerCase()} yet.
         </p>
       ) : (
-        <ul className="divide-y rounded-lg border bg-card">
+        <ul className="bg-card divide-y rounded-lg border">
           {list.data.map((f) => (
             <li key={f.id} className="flex items-center gap-3 px-4 py-3">
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium">{f.label}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   {f.key} · {f.type}
                   {f.required && ' · required'}
                 </p>

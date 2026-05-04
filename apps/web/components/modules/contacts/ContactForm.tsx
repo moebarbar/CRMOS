@@ -79,7 +79,7 @@ export function ContactForm({ workspaceSlug, mode, initial }: Props) {
   return (
     <FormProvider {...form}>
       <form onSubmit={onSubmit} className="space-y-6">
-        <div className="grid gap-4 rounded-lg border bg-card p-6 md:grid-cols-2">
+        <div className="bg-card grid gap-4 rounded-lg border p-6 md:grid-cols-2">
           <Field label="First name" error={errors.firstName?.message}>
             <Input {...register('firstName')} autoFocus />
           </Field>
@@ -97,7 +97,7 @@ export function ContactForm({ workspaceSlug, mode, initial }: Props) {
           </Field>
           <Field label="Lifecycle stage">
             <select
-              className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-sm focus-visible:ring-1 focus-visible:ring-ring"
+              className="border-input focus-visible:ring-ring h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-sm focus-visible:ring-1"
               {...register('lifecycleStage')}
             >
               {contactSchemas.LIFECYCLE_STAGES.map((s) => (
@@ -158,7 +158,7 @@ function Field({
     <div className="space-y-1.5">
       <Label>{label}</Label>
       {children}
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && <p className="text-destructive text-xs">{error}</p>}
     </div>
   );
 }

@@ -51,13 +51,16 @@ export const dealService = {
 
     const hasMore = rows.length > input.limit;
     const items = hasMore ? rows.slice(0, input.limit) : rows;
-    return { items, nextCursor: hasMore ? items[items.length - 1]?.id ?? null : null };
+    return { items, nextCursor: hasMore ? (items[items.length - 1]?.id ?? null) : null };
   },
 
   async get(ctx: Ctx, id: string) {
     const deal = await ctx.prisma.deal.findFirst({
       where: { id, workspaceId: ctx.workspace.id, deletedAt: null },
-      include: { ...DEAL_INCLUDE, pipeline: { include: { stages: { orderBy: { position: 'asc' } } } } },
+      include: {
+        ...DEAL_INCLUDE,
+        pipeline: { include: { stages: { orderBy: { position: 'asc' } } } },
+      },
     });
     if (!deal) throw new TRPCError({ code: 'NOT_FOUND' });
     return deal;
@@ -294,11 +297,7 @@ export const dealService = {
     return { weighted, raw, count: deals.length };
   },
 
-  async assertStageBelongsToPipeline(
-    ctx: Ctx,
-    pipelineId: string,
-    stageId: string,
-  ) {
+  async assertStageBelongsToPipeline(ctx: Ctx, pipelineId: string, stageId: string) {
     const stage = await ctx.prisma.pipelineStage.findUnique({
       where: { id: stageId },
       select: { pipelineId: true, pipeline: { select: { workspaceId: true } } },

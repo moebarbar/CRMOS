@@ -39,7 +39,7 @@ export const companyService = {
 
     const hasMore = rows.length > input.limit;
     const items = hasMore ? rows.slice(0, input.limit) : rows;
-    return { items, nextCursor: hasMore ? items[items.length - 1]?.id ?? null : null };
+    return { items, nextCursor: hasMore ? (items[items.length - 1]?.id ?? null) : null };
   },
 
   async get(ctx: Ctx, id: string) {

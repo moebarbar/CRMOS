@@ -20,10 +20,10 @@ export function CustomFieldsSection({ entity }: { entity: CustomFieldEntity }) {
 
   return (
     <div className="space-y-1">
-      <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+      <h3 className="text-muted-foreground text-sm font-semibold uppercase tracking-wider">
         Custom fields
       </h3>
-      <div className="grid gap-4 rounded-lg border bg-card p-6 md:grid-cols-2">
+      <div className="bg-card grid gap-4 rounded-lg border p-6 md:grid-cols-2">
         {list.data.map((def) => (
           <CustomFieldRenderer
             key={def.id}
@@ -40,8 +40,7 @@ export function CustomFieldsSection({ entity }: { entity: CustomFieldEntity }) {
               setValue(`customFields.${def.key}` as never, v as never, { shouldDirty: true })
             }
             error={
-              formState.errors.customFields &&
-              typeof formState.errors.customFields === 'object'
+              formState.errors.customFields && typeof formState.errors.customFields === 'object'
                 ? undefined
                 : undefined
             }

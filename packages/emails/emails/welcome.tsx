@@ -34,8 +34,8 @@ export default function WelcomeEmail({
               Welcome to ChiefOS, {firstName}.
             </Heading>
             <Text className="text-zinc-700">
-              Your workspace <strong>{workspaceName}</strong> is ready. Sign in any time at the
-              link below.
+              Your workspace <strong>{workspaceName}</strong> is ready. Sign in any time at the link
+              below.
             </Text>
             <Section className="my-6">
               <Button
@@ -47,8 +47,8 @@ export default function WelcomeEmail({
             </Section>
             <Hr className="border-zinc-200" />
             <Text className="text-sm text-zinc-500">
-              You're getting this because you signed up for ChiefOS. If that wasn't you, ignore
-              this email.
+              You're getting this because you signed up for ChiefOS. If that wasn't you, ignore this
+              email.
             </Text>
           </Container>
         </Body>

@@ -47,7 +47,7 @@ export const noteService = {
     });
     if (!existing) throw new TRPCError({ code: 'NOT_FOUND' });
     if (existing.authorId !== ctx.user.id) {
-      throw new TRPCError({ code: 'FORBIDDEN', message: "You can only edit your own notes." });
+      throw new TRPCError({ code: 'FORBIDDEN', message: 'You can only edit your own notes.' });
     }
 
     const { id, ...data } = input;

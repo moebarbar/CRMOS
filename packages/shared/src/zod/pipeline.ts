@@ -45,9 +45,23 @@ export type UpdatePipelineInput = z.infer<typeof updatePipelineSchema>;
 
 export const DEFAULT_SALES_STAGES: CreateStageInput[] = [
   { name: 'Lead', position: 0, probability: 0.1, color: '#94a3b8', isWon: false, isLost: false },
-  { name: 'Qualified', position: 1, probability: 0.25, color: '#7c3aed', isWon: false, isLost: false },
+  {
+    name: 'Qualified',
+    position: 1,
+    probability: 0.25,
+    color: '#7c3aed',
+    isWon: false,
+    isLost: false,
+  },
   { name: 'Demo', position: 2, probability: 0.5, color: '#2563eb', isWon: false, isLost: false },
-  { name: 'Proposal', position: 3, probability: 0.7, color: '#0891b2', isWon: false, isLost: false },
+  {
+    name: 'Proposal',
+    position: 3,
+    probability: 0.7,
+    color: '#0891b2',
+    isWon: false,
+    isLost: false,
+  },
   { name: 'Won', position: 4, probability: 1, color: '#10b981', isWon: true, isLost: false },
   { name: 'Lost', position: 5, probability: 0, color: '#ef4444', isWon: false, isLost: true },
 ];

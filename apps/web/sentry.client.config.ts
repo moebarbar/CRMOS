@@ -7,9 +7,7 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
     tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
     replaysSessionSampleRate: 0,
     replaysOnErrorSampleRate: 1.0,
-    integrations: [
-      Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true }),
-    ],
+    integrations: [Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true })],
     sendDefaultPii: false,
     beforeSend(event) {
       // Strip cookies + auth headers if any sneak in.

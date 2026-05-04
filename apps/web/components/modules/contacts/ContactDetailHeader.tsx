@@ -44,7 +44,7 @@ export function ContactDetailHeader({
   const name = fullName(contact) || contact.email || 'Untitled contact';
 
   return (
-    <div className="flex items-start gap-4 rounded-lg border bg-card p-6">
+    <div className="bg-card flex items-start gap-4 rounded-lg border p-6">
       <Avatar className="h-16 w-16">
         {contact.avatarUrl && <AvatarImage src={contact.avatarUrl} alt="" />}
         <AvatarFallback className="text-lg">{initials(contact)}</AvatarFallback>
@@ -55,24 +55,24 @@ export function ContactDetailHeader({
           <Badge variant="secondary">{contact.lifecycleStage}</Badge>
         </div>
         {(contact.jobTitle || contact.company) && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {contact.jobTitle}
             {contact.jobTitle && contact.company && ' at '}
             {contact.company && (
               <Link
                 href={`/${workspaceSlug}/companies/${contact.company.id}`}
-                className="font-medium text-foreground hover:underline"
+                className="text-foreground font-medium hover:underline"
               >
                 {contact.company.name}
               </Link>
             )}
           </p>
         )}
-        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex flex-wrap items-center gap-3 text-sm">
           {contact.email && (
             <a
               href={`mailto:${contact.email}`}
-              className="inline-flex items-center gap-1.5 hover:text-foreground"
+              className="hover:text-foreground inline-flex items-center gap-1.5"
             >
               <Mail className="h-3.5 w-3.5" /> {contact.email}
             </a>
@@ -80,7 +80,7 @@ export function ContactDetailHeader({
           {contact.phone && (
             <a
               href={`tel:${contact.phone}`}
-              className="inline-flex items-center gap-1.5 hover:text-foreground"
+              className="hover:text-foreground inline-flex items-center gap-1.5"
             >
               <Phone className="h-3.5 w-3.5" /> {contact.phone}
             </a>

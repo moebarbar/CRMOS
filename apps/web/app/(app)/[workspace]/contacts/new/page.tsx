@@ -7,7 +7,7 @@ export default function NewContactPage({ params }: { params: { workspace: string
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">New contact</h1>
-        <p className="text-sm text-muted-foreground">Add someone to your CRM.</p>
+        <p className="text-muted-foreground text-sm">Add someone to your CRM.</p>
       </div>
       <ContactForm workspaceSlug={params.workspace} mode="create" />
     </div>

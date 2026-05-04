@@ -196,7 +196,10 @@ export const pipelineService = {
     return { ok: true };
   },
 
-  async assertOwnsPipeline(ctx: { prisma: Context['prisma']; workspace: { id: string } }, pipelineId: string) {
+  async assertOwnsPipeline(
+    ctx: { prisma: Context['prisma']; workspace: { id: string } },
+    pipelineId: string,
+  ) {
     const exists = await ctx.prisma.pipeline.findFirst({
       where: { id: pipelineId, workspaceId: ctx.workspace.id },
       select: { id: true },

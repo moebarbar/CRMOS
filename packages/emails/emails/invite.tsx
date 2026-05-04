@@ -28,7 +28,9 @@ export default function InviteEmail({
   return (
     <Html>
       <Head />
-      <Preview>{inviterName} invited you to {workspaceName} on ChiefOS.</Preview>
+      <Preview>
+        {inviterName} invited you to {workspaceName} on ChiefOS.
+      </Preview>
       <Tailwind>
         <Body className="bg-white font-sans">
           <Container className="mx-auto max-w-xl p-6">

@@ -116,7 +116,9 @@ export function MoeDemo() {
         <div className="moe-demo-input">
           <MoeIcon
             size={28}
-            state={phase === 'thinking' ? 'thinking' : phase === 'typing' ? 'listening' : 'speaking'}
+            state={
+              phase === 'thinking' ? 'thinking' : phase === 'typing' ? 'listening' : 'speaking'
+            }
           />
           <div className="moe-demo-prompt mono">
             {typed}

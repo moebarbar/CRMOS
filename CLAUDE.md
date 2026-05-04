@@ -10,6 +10,7 @@
 ChiefOS is an AI-native, all-in-one Business OS that replaces 8–12 SaaS tools (CRM, sales pipeline, proposals, contracts, invoices, projects, tasks, forms, scheduling, time tracking, client portal, inbox) with one connected system. The differentiator is **Moe** — an agentic AI layer with voice-to-action that operates every module via tool calls.
 
 **Read these next:**
+
 - `SCHEMA.md` — full data model (single source of truth for the DB)
 - `PHASES.md` — the build roadmap (which phase you're in, what ships in this phase, what doesn't)
 
@@ -114,6 +115,7 @@ Testing          Vitest (unit) · Playwright (e2e)
 ```
 
 **Rules:**
+
 - One router per module in `server/trpc/routers/` (e.g. `contacts.ts`, `deals.ts`)
 - Business logic lives in `server/services/` so it's reusable from tRPC, workflows, and Moe tools
 - Components grouped by module under `components/modules/<module>/`
@@ -124,11 +126,13 @@ Testing          Vitest (unit) · Playwright (e2e)
 ## 4. Database conventions
 
 ### Multi-tenancy is non-negotiable
+
 - **Every row has `workspaceId`.** No exceptions.
 - Use Supabase RLS policies as a defense-in-depth backstop. Trust the application layer first; let RLS save you when you mess up.
 - The first thing every tRPC procedure does is verify the caller can access the workspace.
 
 ### Naming
+
 - Models: `PascalCase` singular (`Contact`, `Invoice`, `TimeEntry`)
 - Fields: `camelCase` (`firstName`, `dueDate`, `workspaceId`)
 - Enums: `PascalCase` enum, `SCREAMING_SNAKE_CASE` values
@@ -137,26 +141,31 @@ Testing          Vitest (unit) · Playwright (e2e)
 - Booleans always start with `is`/`has`/`can` (`isBillable`, `hasSignature`)
 
 ### Money
+
 - **Always store as `Decimal(12, 2)`.** Never floats. Never cents-as-Int unless you're matching Stripe's API at the boundary.
 - Always paired with a `currency` field (ISO 4217: USD, EUR, GBP).
 - Conversions happen at display time, not storage time.
 
 ### Timestamps
+
 - Every model has `createdAt` (default `now()`) and `updatedAt` (`@updatedAt`).
 - All timestamps stored as UTC.
 - Display in user's timezone (read from `User.timezone` or `Workspace.timezone`).
 
 ### Soft delete
+
 - For Contacts, Deals, Projects, Invoices — use `deletedAt` nullable timestamp.
 - Default queries filter `deletedAt: null` via Prisma middleware.
 - Hard delete only for spam/legal/explicit user request.
 
 ### Custom fields
+
 - One `customFields Json` column per model that supports them.
 - Schema definitions live in a separate `CustomFieldDef` table per workspace.
 - Validate against the schema at the service layer before write.
 
 ### Indexing
+
 - Index `workspaceId` on every multi-tenant table.
 - Composite indexes for common queries: `@@index([workspaceId, status])`, `@@index([workspaceId, ownerId])`.
 - Don't over-index. Add when slow queries show up in Axiom.
@@ -195,25 +204,28 @@ export const contactsRouter = createTRPCRouter({
 ### Middleware tiers
 
 ```ts
-publicProcedure       // unauth — landing pages, public proposals/invoices
-protectedProcedure    // requires Clerk session
-workspaceProcedure    // requires session + active workspace + membership
-roleProcedure(role)   // requires specific role
+publicProcedure; // unauth — landing pages, public proposals/invoices
+protectedProcedure; // requires Clerk session
+workspaceProcedure; // requires session + active workspace + membership
+roleProcedure(role); // requires specific role
 ```
 
 `workspaceProcedure` injects `ctx.workspace`, `ctx.membership`, `ctx.user` and verifies access.
 
 ### Inputs and outputs
+
 - Every input parsed by zod. Reuse zod schemas from `packages/shared/`.
 - Never trust the client. Validate at the boundary.
 - Return Prisma types directly when possible. Avoid mapping layers unless you need to hide fields.
 
 ### Errors
+
 - Throw `TRPCError` with proper code: `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `BAD_REQUEST`, `CONFLICT`, `INTERNAL_SERVER_ERROR`.
 - Include a user-friendly `message`. The client surfaces it directly in toasts.
 - Log to Sentry on `INTERNAL_SERVER_ERROR`. Don't log expected 4xx errors.
 
 ### Side effects
+
 - Every mutation writes an `Activity` row.
 - Sensitive mutations write an `AuditLog` row (financial, permission, deletion).
 - Heavy side effects (sending email, generating PDF, calling AI) go through Inngest events, not awaited inline.
@@ -294,6 +306,7 @@ export const contactsTools = [
 ```
 
 ### Rules
+
 - **Read tools** can run freely. **Write tools** that send/charge/delete confirm by default.
 - Use `claude-opus-4-7` for the top-level planner. Drop to `claude-sonnet-4-6` for in-tool sub-tasks (drafting, summarizing).
 - Always pass `tool_use_id` correctly through the loop.
@@ -302,12 +315,14 @@ export const contactsTools = [
 - Token budget enforced per workspace per month. Surface remaining clearly.
 
 ### Memory
+
 - Per-conversation: in the messages array.
 - Per-user: pgvector store of past conversations + key facts.
 - Per-workspace: pgvector store of notes, messages, files, proposals.
 - Inject top-K relevant docs into the system prompt at planner kickoff.
 
 ### Voice
+
 - Push-to-talk button + global hotkey + "Hey Moe" wake word (mobile only initially).
 - Deepgram streaming STT for low latency.
 - Voice-to-text mode: transcript → Claude polishes → injected at cursor.
@@ -318,27 +333,32 @@ export const contactsTools = [
 ## 8. Component conventions
 
 ### Server vs client
+
 - Default to **Server Components**. Fetch data server-side via tRPC server caller.
 - Mark `"use client"` only when you need state, effects, or browser APIs.
 - Drop client islands (forms, dnd, charts) inside server pages.
 
 ### shadcn/ui usage
+
 - Always start from a shadcn primitive when one exists. Don't reinvent.
 - Customize via Tailwind classes + `cva` variants, never by editing the primitive.
 - Group related primitives into module-level compound components (e.g. `<ContactCard />`).
 
 ### Forms
+
 - **Always** `react-hook-form + zodResolver`.
 - Reuse the same zod schema as the tRPC input — share via `packages/shared/`.
 - Errors render inline; submit button disabled while pending.
 - Optimistic updates for fast feedback; rollback on mutation error.
 
 ### Loading + empty + error states
+
 - Every list view has all four: loading, empty, error, success.
 - Use `Skeleton` from shadcn for loading.
 - Empty states have a clear primary action.
 
 ### Accessibility
+
 - All interactive elements keyboard-reachable.
 - `aria-label` on icon-only buttons.
 - Focus rings visible.
@@ -346,6 +366,7 @@ export const contactsTools = [
 - Test with VoiceOver / NVDA before marking a feature done.
 
 ### Design quality
+
 - Look at frontend-design skill standards. ChiefOS is premium — Linear/Notion/Stripe-grade, not Plutio-grade.
 - Spacing on 4px grid. Type scale from a single source. Color tokens via CSS variables for theming + white-label.
 - Animations: 150–250ms ease-out. Don't animate layout. Use `transform` and `opacity`.
@@ -501,7 +522,7 @@ pnpm ai:tools                     # regenerate the Moe tool registry types
 
 ## 18. The bar
 
-Every line of code should pass: *"would a senior engineer at Linear or Stripe ship this?"*
+Every line of code should pass: _"would a senior engineer at Linear or Stripe ship this?"_
 
 If the answer is no, it's not done.
 

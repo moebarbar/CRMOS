@@ -15,11 +15,7 @@ export interface MoeIconProps {
  * eyes, expressive states. Pupils always drift. Halo always rotates.
  * Ported verbatim from shared/MoeIcon.jsx.
  */
-export function MoeIcon({
-  size = 48,
-  state = 'idle',
-  accent = 'var(--lime)',
-}: MoeIconProps) {
+export function MoeIcon({ size = 48, state = 'idle', accent = 'var(--lime)' }: MoeIconProps) {
   const id = React.useId();
   const [blink, setBlink] = React.useState(false);
   const [pupil, setPupil] = React.useState({ x: 0, y: 0 });

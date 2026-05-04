@@ -26,7 +26,7 @@ export default async function PipelineDetailPage({
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{pipeline.name}</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {pipeline.stages.length} stages
             {pipeline.isDefault && ' · default pipeline'}
           </p>

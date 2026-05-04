@@ -30,15 +30,11 @@ export function AcceptInviteClient({
   }, [token, accept]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-12">
-      <div className="w-full max-w-md space-y-4 rounded-lg border bg-card p-8 text-center shadow-sm">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Joining {workspaceName}…
-        </h1>
+    <main className="bg-muted/30 flex min-h-screen items-center justify-center px-4 py-12">
+      <div className="bg-card w-full max-w-md space-y-4 rounded-lg border p-8 text-center shadow-sm">
+        <h1 className="text-2xl font-semibold tracking-tight">Joining {workspaceName}…</h1>
         <Skeleton className="mx-auto h-4 w-48" />
-        {accept.error && (
-          <p className="text-sm text-destructive">{accept.error.message}</p>
-        )}
+        {accept.error && <p className="text-destructive text-sm">{accept.error.message}</p>}
       </div>
     </main>
   );

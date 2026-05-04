@@ -17,12 +17,13 @@ export default async function OnboardingPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-12">
+    <main className="bg-muted/30 flex min-h-screen items-center justify-center px-4 py-12">
       <div className="w-full max-w-md space-y-6">
         <div className="space-y-1 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Create your workspace</h1>
-          <p className="text-sm text-muted-foreground">
-            Welcome{user.firstName ? `, ${user.firstName}` : ''}. One last step before you&apos;re in.
+          <p className="text-muted-foreground text-sm">
+            Welcome{user.firstName ? `, ${user.firstName}` : ''}. One last step before you&apos;re
+            in.
           </p>
         </div>
         <CreateWorkspaceForm />
